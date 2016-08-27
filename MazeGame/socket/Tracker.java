@@ -1,4 +1,4 @@
-package cs5223.socket;
+package MazeGame.socket;
 
 import java.io.*;
 import java.net.*;

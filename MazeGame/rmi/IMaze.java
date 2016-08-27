@@ -1,4 +1,4 @@
-package cs5223.rmi;
+package MazeGame.rmi;
 
 public interface IMaze {
 	boolean JoinGame(Player player);

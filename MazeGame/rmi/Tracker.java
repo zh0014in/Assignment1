@@ -1,4 +1,4 @@
-package cs5223.rmi;
+package MazeGame.rmi;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

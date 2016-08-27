@@ -1,4 +1,4 @@
-package cs5223.rmi;
+package MazeGame.rmi;
 
 import java.io.Serializable;
 import java.util.Random;

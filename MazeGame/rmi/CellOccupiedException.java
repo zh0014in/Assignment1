@@ -1,4 +1,4 @@
-package cs5223.rmi;
+package MazeGame.rmi;
 
 public class CellOccupiedException extends Exception {
 	public CellOccupiedException(String message) {

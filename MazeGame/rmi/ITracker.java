@@ -1,4 +1,4 @@
-package cs5223.rmi;
+package MazeGame.rmi;
 
 /*
  * Copyright 2004 Sun Microsystems, Inc. All  Rights Reserved.
