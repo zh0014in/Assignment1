@@ -82,12 +82,17 @@ public class Maze implements IMaze, Serializable {
 
 	}
 
-	public Maze(int n, int k) throws Exception {
-		if (k > n * n) {
+	public Maze(int mazeSize, int treasureCount) throws Exception {
+		if (treasureCount > mazeSize * mazeSize) {
 			throw new Exception("Treasure size is too big!");
 		}
-		this.cells = new Cell[n][n];
-		buryTreasures(k);
+		this.cells = new Cell[mazeSize][mazeSize];
+		for(int i = 0; i < mazeSize; i++){
+			for(int j = 0; j < mazeSize; j++){
+				this.cells[i][j] = new Cell(i,j,false);
+			}
+		}
+		buryTreasures(treasureCount);
 	}
 
 	public int getWidth() {
@@ -163,9 +168,15 @@ public class Maze implements IMaze, Serializable {
 	public boolean MoveWest(Player player) {
 		try {
 			Cell cell = getCellWithPlayer(player);
-			
+			int x = cell.getX();
+			int y = cell.getY();
+			if(x > 0){
+				cell.leave();
+				this.cells[x-1][y].enter(player);
+				return true;
+			}
+			return false;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
@@ -173,19 +184,55 @@ public class Maze implements IMaze, Serializable {
 
 	@Override
 	public boolean MoveSouth(Player player) {
-		// TODO Auto-generated method stub
+		try {
+			Cell cell = getCellWithPlayer(player);
+			int x = cell.getX();
+			int y = cell.getY();
+			if(y < getHeight()-1){
+				cell.leave();
+				this.cells[x][y+1].enter(player);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
 	public boolean MoveEast(Player player) {
-		// TODO Auto-generated method stub
+		try {
+			Cell cell = getCellWithPlayer(player);
+			int x = cell.getX();
+			int y = cell.getY();
+			if(x < getWidth()-1){
+				cell.leave();
+				this.cells[x+1][y].enter(player);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
 	public boolean MoveNorth(Player player) {
-		// TODO Auto-generated method stub
+		try {
+			Cell cell = getCellWithPlayer(player);
+			int x = cell.getX();
+			int y = cell.getY();
+			if(y > 0){
+				cell.leave();
+				this.cells[x][y-1].enter(player);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
