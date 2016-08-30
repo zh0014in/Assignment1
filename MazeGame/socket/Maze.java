@@ -14,13 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-public class Maze extends JPanel implements Serializable {
+public class Maze extends JPanel implements Serializable, TreasureFoundEventListener {
 
 	class Cell extends JPanel {
 		private int x;
 		private int y;
 		private boolean hasTreasure;
 		private Player player;
+		private TreasureFoundEventListener listener;
 
 		public Cell() {
 
@@ -31,6 +32,10 @@ public class Maze extends JPanel implements Serializable {
 			this.y = y;
 			this.hasTreasure = hasTreasure;
 			this.player = null;
+		}
+
+		public void setTreasureFoundEventListener(TreasureFoundEventListener listener) {
+			this.listener = listener;
 		}
 
 		private Color defaultBackground;
@@ -51,14 +56,14 @@ public class Maze extends JPanel implements Serializable {
 				g.drawString("P", 10, 20);
 			}
 		}
-		
-		 public int getRow() {
-		 return x;
-		 }
-		
-		 public int getCol() {
-		 return y;
-		 }
+
+		public int getRow() {
+			return x;
+		}
+
+		public int getCol() {
+			return y;
+		}
 
 		public boolean getHasTreasure() {
 			return this.hasTreasure;
@@ -91,6 +96,9 @@ public class Maze extends JPanel implements Serializable {
 				if (this.hasTreasure) {
 					this.hasTreasure = false;
 					player.findTreasure();
+					if (listener != null) {
+						listener.onTreasureFoundEvent();
+					}
 					return true;
 				}
 				return false;
@@ -128,7 +136,7 @@ public class Maze extends JPanel implements Serializable {
 				gbc.gridy = col;
 
 				this.cells[row][col] = new Cell(row, col, false);
-
+				this.cells[row][col].setTreasureFoundEventListener(this);
 				Border border = null;
 				if (row < mazeSize - 1) {
 					if (col < mazeSize - 1) {
@@ -284,6 +292,12 @@ public class Maze extends JPanel implements Serializable {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public void onTreasureFoundEvent() {
+		buryTreasure();
+		this.repaint();
 	}
 
 }
