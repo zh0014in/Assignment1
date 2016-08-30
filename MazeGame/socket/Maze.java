@@ -51,14 +51,14 @@ public class Maze extends JPanel implements Serializable {
 				g.drawString("P", 10, 20);
 			}
 		}
-
-		// public int getX() {
-		// return x;
-		// }
-		//
-		// public int getY() {
-		// return y;
-		// }
+		
+		 public int getRow() {
+		 return x;
+		 }
+		
+		 public int getCol() {
+		 return y;
+		 }
 
 		public boolean getHasTreasure() {
 			return this.hasTreasure;
@@ -100,6 +100,7 @@ public class Maze extends JPanel implements Serializable {
 		public void leave() throws Exception {
 			if (this.player != null) {
 				this.player = null;
+				return;
 			}
 			throw new Exception("The cell is not occupied with any player!");
 		}
@@ -123,8 +124,8 @@ public class Maze extends JPanel implements Serializable {
 		for (int row = 0; row < mazeSize; row++) {
 			for (int col = 0; col < mazeSize; col++) {
 				gbc.fill = GridBagConstraints.HORIZONTAL;
-				gbc.gridx = col;
-				gbc.gridy = row;
+				gbc.gridx = row;
+				gbc.gridy = col;
 
 				this.cells[row][col] = new Cell(row, col, false);
 
@@ -189,8 +190,8 @@ public class Maze extends JPanel implements Serializable {
 
 	private Cell getFirstUnOccupiedCell() throws Exception {
 		synchronized (this.cells) {
-			int width = getWidth();
-			int height = getHeight();
+			int width = getMazeSize();
+			int height = getMazeSize();
 			for (int i = 0; i < width; i++) {
 				for (int j = 0; j < height; j++) {
 					if (!this.cells[i][j].getHasPlayer()) {
@@ -203,8 +204,8 @@ public class Maze extends JPanel implements Serializable {
 	}
 
 	private Cell getCellWithPlayer(Player player) throws Exception {
-		for (int i = 0; i < getWidth(); i++) {
-			for (int j = 0; j < getHeight(); j++) {
+		for (int i = 0; i < getMazeSize(); i++) {
+			for (int j = 0; j < getMazeSize(); j++) {
 				if (this.cells[i][j].getHasPlayer(player)) {
 					return this.cells[i][j];
 				}
@@ -216,11 +217,12 @@ public class Maze extends JPanel implements Serializable {
 	public boolean MoveWest(Player player) {
 		try {
 			Cell cell = getCellWithPlayer(player);
-			int x = cell.getX();
-			int y = cell.getY();
+			int x = cell.getRow();
+			int y = cell.getCol();
 			if (x > 0) {
 				cell.leave();
 				this.cells[x - 1][y].enter(player);
+				this.repaint();
 				return true;
 			}
 			return false;
@@ -233,11 +235,12 @@ public class Maze extends JPanel implements Serializable {
 	public boolean MoveSouth(Player player) {
 		try {
 			Cell cell = getCellWithPlayer(player);
-			int x = cell.getX();
-			int y = cell.getY();
-			if (y < getHeight() - 1) {
+			int x = cell.getRow();
+			int y = cell.getCol();
+			if (y < getMazeSize() - 1) {
 				cell.leave();
 				this.cells[x][y + 1].enter(player);
+				this.repaint();
 				return true;
 			}
 			return false;
@@ -250,11 +253,12 @@ public class Maze extends JPanel implements Serializable {
 	public boolean MoveEast(Player player) {
 		try {
 			Cell cell = getCellWithPlayer(player);
-			int x = cell.getX();
-			int y = cell.getY();
-			if (x < getWidth() - 1) {
+			int x = cell.getRow();
+			int y = cell.getCol();
+			if (x < getMazeSize() - 1) {
 				cell.leave();
 				this.cells[x + 1][y].enter(player);
+				this.repaint();
 				return true;
 			}
 			return false;
@@ -267,11 +271,12 @@ public class Maze extends JPanel implements Serializable {
 	public boolean MoveNorth(Player player) {
 		try {
 			Cell cell = getCellWithPlayer(player);
-			int x = cell.getX();
-			int y = cell.getY();
+			int x = cell.getRow();
+			int y = cell.getCol();
 			if (y > 0) {
 				cell.leave();
 				this.cells[x][y - 1].enter(player);
+				this.repaint();
 				return true;
 			}
 			return false;
