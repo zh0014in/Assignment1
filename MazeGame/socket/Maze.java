@@ -2,6 +2,7 @@ package MazeGame.socket;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
@@ -30,34 +31,34 @@ public class Maze extends JPanel implements Serializable {
 			this.y = y;
 			this.hasTreasure = hasTreasure;
 			this.player = null;
-			
-			addMouseListener(new MouseAdapter() {
-	            @Override
-	            public void mouseEntered(MouseEvent e) {
-	                defaultBackground = getBackground();
-	                setBackground(Color.BLUE);
-	            }
-
-	            @Override
-	            public void mouseExited(MouseEvent e) {
-	                setBackground(defaultBackground);
-	            }
-	        });
 		}
+
 		private Color defaultBackground;
 
-	    @Override
-	    public Dimension getPreferredSize() {
-	        return new Dimension(50, 50);
-	    }
-
-		public int getX() {
-			return x;
+		@Override
+		public Dimension getPreferredSize() {
+			return new Dimension(50, 50);
 		}
 
-		public int getY() {
-			return y;
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			// Draw Text
+			if (this.hasTreasure) {
+				g.drawString("X", 10, 20);
+			}
+			if (this.player != null) {
+				g.drawString("P", 10, 20);
+			}
 		}
+
+		// public int getX() {
+		// return x;
+		// }
+		//
+		// public int getY() {
+		// return y;
+		// }
 
 		public boolean getHasTreasure() {
 			return this.hasTreasure;
@@ -74,8 +75,8 @@ public class Maze extends JPanel implements Serializable {
 		public boolean getHasPlayer() {
 			return this.player != null;
 		}
-		
-		public boolean getHasPlayer(Player player){
+
+		public boolean getHasPlayer(Player player) {
 			return this.player != null && this.player.getName() == player.getName();
 		}
 
@@ -108,7 +109,7 @@ public class Maze extends JPanel implements Serializable {
 	private static Cell[][] cells;
 
 	public Maze() {
-		
+
 	}
 
 	public Maze(int mazeSize, int treasureCount) throws Exception {
@@ -116,44 +117,40 @@ public class Maze extends JPanel implements Serializable {
 			throw new Exception("Treasure size is too big!");
 		}
 		setLayout(new GridBagLayout());
-		
+
 		GridBagConstraints gbc = new GridBagConstraints();
 		this.cells = new Cell[mazeSize][mazeSize];
-		for(int row = 0; row < mazeSize; row++){
-			for(int col = 0; col < mazeSize; col++){
+		for (int row = 0; row < mazeSize; row++) {
+			for (int col = 0; col < mazeSize; col++) {
 				gbc.fill = GridBagConstraints.HORIZONTAL;
 				gbc.gridx = col;
 				gbc.gridy = row;
-				
-				this.cells[row][col] = new Cell(row,col,false);
-				
-//				Border border = null;
-//				if (row < mazeSize-1) {
-//					if (col < mazeSize-1) {
-//						border = new MatteBorder(1, 1, 0, 0, Color.BLACK);
-//					} else {
-//						border = new MatteBorder(1, 1, 0, 1, Color.BLACK);
-//					}
-//				} else {
-//					if (col < mazeSize-1) {
-//						border = new MatteBorder(1, 1, 1, 0, Color.BLACK);
-//					} else {
-//						border = new MatteBorder(1, 1, 1, 1, Color.BLACK);
-//					}
-//				}
-//				this.cells[row][col].setBorder(border);
+
+				this.cells[row][col] = new Cell(row, col, false);
+
+				Border border = null;
+				if (row < mazeSize - 1) {
+					if (col < mazeSize - 1) {
+						border = new MatteBorder(1, 1, 0, 0, Color.BLACK);
+					} else {
+						border = new MatteBorder(1, 1, 0, 1, Color.BLACK);
+					}
+				} else {
+					if (col < mazeSize - 1) {
+						border = new MatteBorder(1, 1, 1, 0, Color.BLACK);
+					} else {
+						border = new MatteBorder(1, 1, 1, 1, Color.BLACK);
+					}
+				}
+				this.cells[row][col].setBorder(border);
 				add(this.cells[row][col], gbc);
 			}
 		}
 		buryTreasures(treasureCount);
 	}
 
-	public int getWidth() {
+	public int getMazeSize() {
 		return this.cells.length;
-	}
-
-	public int getHeight() {
-		return this.cells[0].length;
 	}
 
 	private void buryTreasures(int k) {
@@ -162,13 +159,13 @@ public class Maze extends JPanel implements Serializable {
 			buryTreasure();
 		}
 	}
-	
-	private void buryTreasure(){
+
+	private void buryTreasure() {
 		Random rand = new Random();
 		boolean success = false;
 		do {
-			int x = rand.nextInt(getWidth());
-			int y = rand.nextInt(getHeight());
+			int x = rand.nextInt(getMazeSize());
+			int y = rand.nextInt(getMazeSize());
 			success = this.cells[x][y].buryTreasure();
 		} while (!success);
 	}
@@ -205,11 +202,10 @@ public class Maze extends JPanel implements Serializable {
 		}
 	}
 
-
-	private Cell getCellWithPlayer(Player player) throws Exception{
-		for(int i = 0; i < getWidth(); i++){
-			for(int j = 0; j < getHeight(); j++){
-				if(this.cells[i][j].getHasPlayer(player)){
+	private Cell getCellWithPlayer(Player player) throws Exception {
+		for (int i = 0; i < getWidth(); i++) {
+			for (int j = 0; j < getHeight(); j++) {
+				if (this.cells[i][j].getHasPlayer(player)) {
 					return this.cells[i][j];
 				}
 			}
@@ -222,9 +218,9 @@ public class Maze extends JPanel implements Serializable {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getX();
 			int y = cell.getY();
-			if(x > 0){
+			if (x > 0) {
 				cell.leave();
-				this.cells[x-1][y].enter(player);
+				this.cells[x - 1][y].enter(player);
 				return true;
 			}
 			return false;
@@ -239,9 +235,9 @@ public class Maze extends JPanel implements Serializable {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getX();
 			int y = cell.getY();
-			if(y < getHeight()-1){
+			if (y < getHeight() - 1) {
 				cell.leave();
-				this.cells[x][y+1].enter(player);
+				this.cells[x][y + 1].enter(player);
 				return true;
 			}
 			return false;
@@ -256,9 +252,9 @@ public class Maze extends JPanel implements Serializable {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getX();
 			int y = cell.getY();
-			if(x < getWidth()-1){
+			if (x < getWidth() - 1) {
 				cell.leave();
-				this.cells[x+1][y].enter(player);
+				this.cells[x + 1][y].enter(player);
 				return true;
 			}
 			return false;
@@ -273,9 +269,9 @@ public class Maze extends JPanel implements Serializable {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getX();
 			int y = cell.getY();
-			if(y > 0){
+			if (y > 0) {
 				cell.leave();
-				this.cells[x][y-1].enter(player);
+				this.cells[x][y - 1].enter(player);
 				return true;
 			}
 			return false;
