@@ -14,7 +14,6 @@ public class Game {
 			String playerId = args[2];
 			Registry registry = LocateRegistry.getRegistry(trackerIp);
 			ITracker stub = (ITracker) registry.lookup("ITracker");
-
 		} catch (Exception e) {
 			System.err.println("ComputePi exception:");
 			e.printStackTrace();
