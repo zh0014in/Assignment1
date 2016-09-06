@@ -142,11 +142,11 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 					if (col < mazeSize - 1) {
 						border = new MatteBorder(1, 1, 0, 0, Color.BLACK);
 					} else {
-						border = new MatteBorder(1, 1, 0, 1, Color.BLACK);
+						border = new MatteBorder(1, 1, 1, 0, Color.BLACK);
 					}
 				} else {
 					if (col < mazeSize - 1) {
-						border = new MatteBorder(1, 1, 1, 0, Color.BLACK);
+						border = new MatteBorder(1, 1, 0, 1, Color.BLACK);
 					} else {
 						border = new MatteBorder(1, 1, 1, 1, Color.BLACK);
 					}
