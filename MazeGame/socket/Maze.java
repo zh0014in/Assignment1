@@ -112,20 +112,34 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 			throw new Exception("The cell is not occupied with any player!");
 		}
+		
+		public String toString(){
+			String result = x + "," + y + "," + this.hasTreasure;
+			if(this.player != null){
+				result += "," + player.toStr();
+			}
+			return result;
+		}
+		
+		public void fromString(String input){
+			String[] cellInfo = input.split(",");
+			this.x = Integer.parseInt(cellInfo[0]);
+			this.y = Integer.parseInt(cellInfo[1]);
+			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
+			this.player = new Player(cellInfo[3]);
+		}
 
 	}
 
 	private static Cell[][] cells;
 
 	public Maze() {
-
-	}
-
-	public Maze(int mazeSize, int treasureCount) throws Exception {
-		if (treasureCount > mazeSize * mazeSize) {
-			throw new Exception("Treasure size is too big!");
-		}
 		setLayout(new GridBagLayout());
+	}
+	
+	// non-server will init with this
+	public Maze(int mazeSize){
+		this();
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		this.cells = new Cell[mazeSize][mazeSize];
@@ -154,6 +168,14 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 				this.cells[row][col].setBorder(border);
 				add(this.cells[row][col], gbc);
 			}
+		}
+	}
+
+	// first server will init with this
+	public Maze(int mazeSize, int treasureCount) throws Exception {
+		this(mazeSize);
+		if (treasureCount > mazeSize * mazeSize) {
+			throw new Exception("Treasure size is too big!");
 		}
 		buryTreasures(treasureCount);
 	}
@@ -298,6 +320,28 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public void onTreasureFoundEvent() {
 		buryTreasure();
 		this.repaint();
+	}
+	
+	public void fromString(String input) throws Exception{
+		String[] info = input.split(";");
+		if(info.length != this.cells.length * this.cells[0].length){
+			throw new Exception("input string is not correct.");
+		}
+		for(int i = 0; i < this.cells.length; i++){
+			for(int j = 0; j < this.cells[i].length; j++){
+				this.cells[i][j].fromString(info[j + i*j]);
+			}
+		}
+	}
+	
+	public String toString(){
+		String result = "";
+		for(int i = 0; i < this.cells.length; i++){
+			for(int j = 0; j < this.cells[i].length; j++){
+				result += this.cells[i][j].toString() + ";";
+			}
+		}
+		return result;
 	}
 
 }

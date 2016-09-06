@@ -22,6 +22,10 @@ public class Player implements Serializable {
 		this.score = 0;
 		this.informationSeqNumber = 0;
 	}
+	
+	public Player(String input){
+		fromString(input);
+	}
 
 	public String getName() {
 		return name;
@@ -46,14 +50,16 @@ public class Player implements Serializable {
 
 	
 	public String toStr(){
-		return "" + this.sequenceNumber + "," + this.name + "," + this.ip + ","+ this.port + ","+ this.score + "," + this.informationSeqNumber;
+		return "" + this.sequenceNumber + "-" + this.name + "-" + this.ip + "-"+ this.port + "-"+ this.score + "-" + this.informationSeqNumber;
 	}
 	
-	public static Player fromString(String playerInfo){
-		String[] info = playerInfo.split(",");
-		Player player = new Player(Integer.parseInt(info[0]), info[1], info[2], Integer.parseInt(info[3]));
-		player.setScore(Integer.parseInt(info[4]));
-		player.informationSeqNumber = Integer.parseInt(info[5]);
-		return player;
+	public void fromString(String playerInfo){
+		String[] info = playerInfo.split("-");
+		this.sequenceNumber = Integer.parseInt(info[0]);
+		this.name = info[1];
+		this.ip = info[2];
+		this.port = Integer.parseInt(info[3]);
+		this.score = Integer.parseInt(info[4]);
+		this.informationSeqNumber = Integer.parseInt(info[5]);
 	}
 }
