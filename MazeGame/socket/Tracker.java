@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 class Tracker {
 	public static int port = 8000;
-	public static int N = 20;
-	public static int K = 5;
+	public static int N = 10;
+	public static int K = 2;
 	
 	public static int count = 0;
 	

@@ -2,11 +2,12 @@ package MazeGame.socket;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 public class Game implements ServerEventListener {
+	Socket playerClientSkt2Tracker;
 	private ServerThread serverThread;
-
+	private Player localPlayer;
+	
 	public static void main(String args[]) {
 		try {
 			Game game = new Game();
@@ -18,6 +19,7 @@ public class Game implements ServerEventListener {
 
 	public Game() {
 		serverThread = new ServerThread();
+		this.localPlayer = null;
 		serverThread.setServerEventListener(this);
 	}
 
@@ -26,13 +28,11 @@ public class Game implements ServerEventListener {
 		// players own server socket in case it need to be the Player Server
 		serverThread.start();
 		// -------------------------------------------------------------------//
-
 	}
-
+	
 	@Override
 	public void onServerSocketCreatedEvent() {
 		int portNumber = serverThread.getPortNumber();
-		Socket playerClientSkt2Tracker;
 		try {
 			playerClientSkt2Tracker = new Socket("localhost", 8000);
 
@@ -47,9 +47,8 @@ public class Game implements ServerEventListener {
 			// this information contains all registered players which might
 			// already crashed or exit the game
 			String trackerMessage = in.readLine();
-			System.out.println("Client received message: " + trackerMessage);
+			System.out.println("Client received message from tracker: " + trackerMessage);
 			// close connection with Tracker after received all information
-			playerClientSkt2Tracker.close();
 			
 			String[] trackerMessages = trackerMessage.split(";");
 			// maze parameters: n and k
@@ -58,14 +57,29 @@ public class Game implements ServerEventListener {
 			int k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
 			
+			int currentExistingPlayers = trackerMessages.length -1;
+			System.out.println("Total Players Number: " + currentExistingPlayers);
+			
+			if (currentExistingPlayers == 1){
+				serverThread.isPrimary = true;
+				System.out.println("============PRIMARY SERVER===============");
+			}
+//			if (currentExistingPlayers == 2)
+//				serverThread.isBackup = true;
+			
+			Player[] playerList = parseTrackerInfo(n, k, trackerMessages);
+			
+			this.localPlayer = playerList[currentExistingPlayers-1];
+			
+			
+			// After the primary and backup server is up, create the local Game
 			try {
-				GameThread gameThread = new GameThread(n,k);
+				GameThread gameThread = new GameThread(n,k, this.localPlayer, playerList);
 				gameThread.start();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,6 +87,21 @@ public class Game implements ServerEventListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public Player[] parseTrackerInfo(int n, int k, String[] trackerMessages){
+		Player[] playerList = new Player[n*n + 500];
+		// start from i=1 because the first message is not a player info, i=0 is n and k
+		 for (int i=1; i < trackerMessages.length; i++ ){
+			 String[] singlePlayerParameters = trackerMessages[i].split(",");
+			 String playerName = singlePlayerParameters[0];
+			 int playerSequenceNumber = Integer.parseInt(singlePlayerParameters[1]);
+			 String playerIP = singlePlayerParameters[2];
+			 int playerPort = Integer.parseInt(singlePlayerParameters[3]);
+			 playerList[i-1] = new Player(playerSequenceNumber, playerName, playerIP, playerPort);
+			 System.out.println("Player Info: " + playerSequenceNumber + " " + playerName + " " + playerIP + " " + playerPort);
+		 }
+		 return playerList;
 	}
 }
+

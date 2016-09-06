@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,45 +15,51 @@ import javax.swing.JLabel;
 
 public class GameThread extends Thread {
 	private Maze maze;
+	private Player localPlayer;
+	private Socket conn;
+	private Player[] playerList;
+	private Socket conn2Server;
+	public GameThread() {}
 
-	public GameThread() {
-
-	}
-
-	public GameThread(int mazeSize, int treasureCount) throws Exception {
+	public GameThread(int mazeSize, int treasureCount, Player localPlayer,  Player[] playerList) throws Exception {
 		this.maze = new Maze(mazeSize, treasureCount);
+		this.localPlayer = localPlayer;
+		this.playerList = playerList;
 	}
 
 	public void run() {
-
-		// players socket client to talk to Tracker
-
-		// players basic information list received from Tracker (player
-		// name, sequence number, ip, port)
-		// Player[] playerList = new Player[n * n + 500];
-		// for (int i = 1; i < trackerMessages.length; i++) {
-		// String[] singlePlayerParameters = trackerMessages[i].split(",");
-		// String playerName = singlePlayerParameters[0];
-		// int playerSequenceNumber =
-		// Integer.parseInt(singlePlayerParameters[1]);
-		// String playerIP = singlePlayerParameters[2];
-		// int playerPort = Integer.parseInt(singlePlayerParameters[3]);
-		// playerList[i - 1] = new Player(playerSequenceNumber, playerName,
-		// playerIP, playerPort);
-		// System.out.println(
-		// "Player Info: " + playerSequenceNumber + " " + playerName + " " +
-		// playerIP + " " + playerPort);
-		// }
-
-		// local player always is the last one in the list Tracker Send to
-		// us
-		// Player localPlayer = playerList[playerList.length - 1];
-
-		// TODO : Setup GUI (use JAVAFX???)
 		createAndShowGUI();
-		Player player = new Player(0, "ZZ", "127.0.0.1",1234);
-		maze.JoinGame(player);
+		// Question: we need to get server approve you can move the we can move right?
+		maze.JoinGame(this.localPlayer);
 		boolean looping = true;
+		BufferedReader inFromServer;
+		try {
+			// find the actual primary server
+			Player primaryServer = null;
+			for(int i=0; i<playerList.length; i++){
+				primaryServer = playerList[i];
+				try {
+					System.out.println("LocalPlayer try to connect to " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
+					this.conn2Server = new Socket(primaryServer.getIp(), primaryServer.getPort());
+					System.out.println("LocalPlayer find primary server: " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
+					break;
+				} catch (Exception e) {
+					System.out.println("Connect to " + primaryServer.getName() + " failed! Try next one!");
+				}
+			}
+			//send local player to server
+			ObjectOutputStream objectOutput = new ObjectOutputStream(this.conn2Server.getOutputStream());
+	        objectOutput.writeObject(this.localPlayer);
+	        // receive the full list of players
+	        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
+	        while (!inFromServer.ready()) {}
+	        String fullListPlayersString = inFromServer.readLine();
+	        System.out.println("LocalPlayer receive full list of current players: " + fullListPlayersString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Scanner command = new Scanner(System.in);
 		while (looping) {
 			System.out.println(
@@ -67,16 +74,16 @@ public class GameThread extends Thread {
 				// refresh position, ask server for update
 				break;
 			case 1:
-				maze.MoveWest(player);
+				maze.MoveWest(this.localPlayer);
 				break;
 			case 2:
-				maze.MoveSouth(player);
+				maze.MoveSouth(this.localPlayer);
 				break;
 			case 3:
-				maze.MoveEast(player);
+				maze.MoveEast(this.localPlayer);
 				break;
 			case 4:
-				maze.MoveNorth(player);
+				maze.MoveNorth(this.localPlayer);
 				break;
 			default:
 				System.out.println("Invalid input: " + newCommand);
@@ -85,7 +92,7 @@ public class GameThread extends Thread {
 		}
 		System.out.println("Game END!!!");
 	}
-
+	
 	private void createAndShowGUI() {
 		// Create and set up the window.
 		JFrame frame = new JFrame("Game");
@@ -98,4 +105,6 @@ public class GameThread extends Thread {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
+	
 }
