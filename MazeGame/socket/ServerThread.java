@@ -63,8 +63,6 @@ public class ServerThread extends Thread {
 						fullListString += p.toStr() + ";";
 					}
 					
-					
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -129,7 +127,7 @@ class PlayerThread extends Thread{
             curPlayer = remotePlayer;
 	        ServerThread.playerList.add(remotePlayer);
             System.out.println("Player Added: "+ remotePlayer.toStr());
-            String fullListString = "";
+            String fullListString = "IF;";
             
             for(Player p : ServerThread.playerList){
 				fullListString += p.toStr() + ";";
@@ -144,8 +142,7 @@ class PlayerThread extends Thread{
 	        	System.out.println("Server receive  " + msg + "from " + curPlayer.getName());
     		}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Player disconnect");
 		}
 	}
 }
@@ -159,11 +156,11 @@ class Ping extends Thread{
 				Thread.sleep(5000);
 				for(Player p: ServerThread.playerList){
 					try{
-						p.outToClient.writeBytes("Ping: " + p.getName() + "\n");
+						p.outToClient.writeBytes("PI;" + p.getName() + "\n");
 					}
 					catch(IOException e){
 						ServerThread.playerList.remove(p);
-						String msg = "";
+						String msg = "IF;";
 						for(Player temp : ServerThread.playerList){
 							msg += temp.toStr() + ";";
 						}

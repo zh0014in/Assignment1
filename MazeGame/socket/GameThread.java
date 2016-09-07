@@ -58,10 +58,21 @@ public class GameThread extends Thread {
 	        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
 	        while(true){
 	        	// receive the full list of players
-	        	System.out.println("LocalPlayer wait for information from server.");
 	        	while (!inFromServer.ready()) {}
-	        	String fullListPlayersString = inFromServer.readLine();
-	        	System.out.println("LocalPlayer receive full list of current players: " + fullListPlayersString);
+	        	String msg = inFromServer.readLine();
+	        	String[] msgToken = msg.split(";");
+	        	
+	        	if (msgToken[0].equals("BK")){
+	        		System.out.println("BackupServer received backup info: " + msg);
+	        	}
+	        	else if (msgToken[0].equals("IF")){
+	        		System.out.println("LocalPlayer receive full list of current players: " + msg);
+	        	}
+//	        	else if (msgToken[0] == "PI"){
+//	        		System.out.println("-----------------------------------------------------------------------Server PING");
+//	        	}
+//	        	else
+//        			System.out.println("-----------------------------------------" + msg);
 	        }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
