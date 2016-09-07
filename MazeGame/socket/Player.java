@@ -1,6 +1,8 @@
 package MazeGame.socket;
 
+import java.io.DataOutputStream;
 import java.io.Serializable;
+import java.net.Socket;
 
 public class Player implements Serializable {
 	public int sequenceNumber = 0;
@@ -11,6 +13,9 @@ public class Player implements Serializable {
 	private int port;
 	private int score;
 	public int informationSeqNumber;
+	public Socket connOnServer = null;
+	public boolean isBackup = false;
+	public DataOutputStream outToClient = null;
 	
 	public Player() {}
 

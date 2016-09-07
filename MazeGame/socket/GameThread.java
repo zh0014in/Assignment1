@@ -2,9 +2,11 @@ package MazeGame.socket;
 
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -48,13 +50,19 @@ public class GameThread extends Thread {
 				}
 			}
 			//send local player to server
-			ObjectOutputStream objectOutput = new ObjectOutputStream(this.conn2Server.getOutputStream());
-	        objectOutput.writeObject(this.localPlayer);
-	        // receive the full list of players
+//			ObjectOutputStream objectOutput = new ObjectOutputStream(this.conn2Server.getOutputStream());
+			DataOutputStream out = new DataOutputStream(this.conn2Server.getOutputStream());
+	        out.writeBytes(this.localPlayer.toStr() + "\n");
+	        out.flush();
+	        
 	        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
-	        while (!inFromServer.ready()) {}
-	        String fullListPlayersString = inFromServer.readLine();
-	        System.out.println("LocalPlayer receive full list of current players: " + fullListPlayersString);
+	        while(true){
+	        	// receive the full list of players
+	        	System.out.println("LocalPlayer wait for information from server.");
+	        	while (!inFromServer.ready()) {}
+	        	String fullListPlayersString = inFromServer.readLine();
+	        	System.out.println("LocalPlayer receive full list of current players: " + fullListPlayersString);
+	        }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -105,6 +113,4 @@ public class GameThread extends Thread {
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
-	
 }
