@@ -11,18 +11,20 @@ public class Game implements ServerEventListener {
 	private GameThread gameThread;
 	private Player localPlayer;
 	private Maze maze;
-	
+	private String name = "";
 	public static void main(String args[]) {
 		try {
-			Game game = new Game();
+			String name = "A0";
+			Game game = new Game(name);
 			game.begin();
 		} catch (Exception e) {
 			System.out.println("Game Crashed!");
 		}
 	}
 
-	public Game() {
+	public Game(String name) {
 		serverThread = new ServerThread();
+		this.name = name;
 		this.localPlayer = null;
 		serverThread.setServerEventListener(this);
 	}
@@ -41,7 +43,7 @@ public class Game implements ServerEventListener {
 			playerClientSkt2Tracker = new Socket("localhost", 8000);
 			out = new PrintWriter(playerClientSkt2Tracker.getOutputStream(), true);
 			// send its own port number to Tracker
-			String message = "" + portNumber;
+			String message = this.name + "-" + portNumber;
 			out.println(message);
 			// receive information from Tracker
 			BufferedReader in = new BufferedReader(new InputStreamReader(playerClientSkt2Tracker.getInputStream()));

@@ -186,9 +186,7 @@ class PlayerThread extends Thread{
 			}
             
             ServerThread.sendMsgToBackUp(fullListString);
-            System.out.println("1==========-->1321413" +fullListString);
             Game.out.println(fullListString);
-            System.out.println("2==========-->1321413");
 	        outToClient.writeBytes(fullListString + "\n");
 	        outToClient.flush();
             
@@ -232,9 +230,7 @@ class PlayerThread extends Thread{
 				fullListString += p.toStr() + ";";
 			}
             ServerThread.sendMsgToBackUp(fullListString);
-            System.out.println("3==========-->1321413");
             Game.out.println(fullListString);
-            System.out.println("4==========-->1321413");
 			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}
