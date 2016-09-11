@@ -11,10 +11,15 @@ public class Game implements ServerEventListener {
 	private Player localPlayer;
 	private Maze maze;
 	private String name = "";
+	
 	public static void main(String args[]) {
 		try {
-			String name = "A0";
-			Game game = new Game(name);
+//			String name = "A0";
+//			Game game = new Game(name);
+			String ip = args[0];
+			int port = Integer.parseInt(args[1]);
+			String name = args[2];
+			Game game = new Game(ip, port, name);
 			game.begin();
 		} catch (Exception e) {
 			System.out.println("Game Crashed!");
@@ -28,10 +33,22 @@ public class Game implements ServerEventListener {
 		serverThread.setServerEventListener(this);
 	}
 
+	public Game(String ip, int port, String name) {
+		serverThread = new ServerThread();
+		this.name = name;
+		this.localPlayer = null;
+		serverThread.setServerEventListener(this);
+	}
+	
 	public void begin() {
 		// ------------------------------------------------------------------//
 		// players own server socket in case it need to be the Player Server
-		serverThread.start();
+		try{
+			serverThread.start();
+		}catch(Exception e){
+			e.printStackTrace();
+			System.exit(0);
+		}
 		// -------------------------------------------------------------------//
 	}
 	

@@ -17,6 +17,11 @@ class Tracker {
 			int N = 10; //Integer.parseInt(args[1]);
 			int K = 2; //Integer.parseInt(args[2]);
 			
+//			int port = Integer.parseInt(args[0]);
+//			port = 8000;
+//			int N = Integer.parseInt(args[1]);
+//			int K = Integer.parseInt(args[2]);
+			
 			Socket socket;
 			ServerSocket serverSocket = new ServerSocket(port);
 			while (true) {
@@ -69,7 +74,6 @@ class PlayerConnection extends Thread{
 		        	System.out.println("-->Get updated players infomation: " + Tracker.playerInfo);
 		        }
 			} catch (IOException e) {
-				
 				break;
 			}
 		}
