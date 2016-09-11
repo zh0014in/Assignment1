@@ -13,7 +13,7 @@ public class Game implements ServerEventListener {
 	private int k;
 
 	private String name = "";
-	
+
 	public static void main(String args[]) {
 		try {
 			String name = "A0";
@@ -64,6 +64,10 @@ public class Game implements ServerEventListener {
 			k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
 
+
+			gameThread = new GameThread(n);
+			gameThread.start();
+			
 			int currentExistingPlayers = trackerMessages.length - 1;
 			System.out.println("Total Players Number: " + currentExistingPlayers);
 
@@ -76,10 +80,6 @@ public class Game implements ServerEventListener {
 				ClientThread c2s = new ClientThread(playerList, this.localPlayer);
 				c2s.setServerEventListener(this);
 				c2s.start();
-
-				gameThread = new GameThread(n, k);
-				gameThread.start();
-
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -121,13 +121,17 @@ public class Game implements ServerEventListener {
 
 	@Override
 	public void onPrimaryServerFoundEvent(DataOutputStream out) {
-		gameThread.setOutputStream(out);
+		if (gameThread != null) {
+			gameThread.setOutputStream(out);
+		}
 	}
 
 	@Override
 	public void onMazeStringReceived(String msg) {
 		try {
-			gameThread.updateMaze(msg);
+			if (gameThread != null) {
+				gameThread.updateMaze(msg);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

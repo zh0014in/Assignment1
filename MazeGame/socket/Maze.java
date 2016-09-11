@@ -32,16 +32,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			this.y = y;
 			this.hasTreasure = hasTreasure;
 			this.player = null;
-			
-			this.addMouseListener(new MouseAdapter() {
-			     @Override
-			     public void mouseClicked(MouseEvent mouseEvent) {
-			         int count = mouseEvent.getClickCount();
-			         if (count == 1) {
-			        	 setBackground(Color.RED);
-			         }
-			     }
-			});
 		}
 
 		public void setTreasureFoundEventListener(TreasureFoundEventListener listener) {

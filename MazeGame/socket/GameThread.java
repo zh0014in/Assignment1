@@ -27,22 +27,17 @@ public class GameThread extends Thread {
 		this.maze = new Maze();
 	}
 
-	public GameThread(int n, int k) throws Exception {
+	public GameThread(int n) throws Exception {
 		this.maze = new Maze(n);
 	}
 
 	public void updateMaze(String msg) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				// *** Swing code can go here ***
-				try {
-					maze.fromString(msg);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			maze.fromString(msg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setOutputStream(DataOutputStream out) {
