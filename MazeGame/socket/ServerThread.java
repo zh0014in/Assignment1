@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ServerThread extends Thread {
 	// this is the master server thread
 	public static int portNumber = 0;
-	public static boolean isPrimary = false;
+	private boolean isPrimary = false;
 	public boolean isBackup = false;
 	private DataOutputStream out2Backup = null;
 	private ServerEventListener listener;
@@ -34,6 +34,10 @@ public class ServerThread extends Thread {
 	
 	public void setServerEventListener (ServerEventListener listener) {
 	    this.listener = listener;
+	}
+	
+	public boolean getIsPrimary(){
+		return this.isPrimary;
 	}
 	
 	public void initializeMaze(int n, int k){

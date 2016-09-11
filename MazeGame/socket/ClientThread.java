@@ -65,11 +65,15 @@ class ClientThread extends Thread{
 			        	String tag = msgToken[0].trim();
 			        	if (tag.equals("BK")){
 			        		System.out.println("BackupServer received backup info: " + msg);
+			        		if(this.listener != null){
+			        			this.listener.onBackupServerUpEvent();
+			        		}
 			        		if (msgToken[1].equals("IF")){
 			        			ServerThread.playerList =  new ArrayList<Player>();
 			        			for(int i=2; i<msgToken.length; i++){
 			        				Player tmp = new Player(msgToken[i]);
 			        				ServerThread.addNewPlayer(tmp);
+			        				
 //			        				if(ServerThread.addNewPlayer(tmp)){
 //			        					System.out.println("==>Player "+ msgToken[i] +" added in list");
 //			        				}

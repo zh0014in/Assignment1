@@ -22,12 +22,20 @@ public class GameThread extends Thread {
 	private Socket conn;
 	private Socket conn2Server;
 	private DataOutputStream out;
+	private String name;
+	private String initialTitle;
+	private String title = "";
+	private JFrame frame;
 
 	public GameThread() {
-		this.maze = new Maze();
 	}
 
-	public GameThread(int n) throws Exception {
+	public GameThread(String name){
+		this.name = name;
+		this.initialTitle = "Game-" + this.name;
+	}
+	
+	public void setMazeSize(int n){
 		this.maze = new Maze(n);
 	}
 
@@ -100,7 +108,12 @@ public class GameThread extends Thread {
 
 	private void createAndShowGUI() {
 		// Create and set up the window.
-		JFrame frame = new JFrame("Game");
+		if (!this.title.isEmpty()) {
+			frame = new JFrame(this.title);
+		}
+		else{
+			frame = new JFrame(this.initialTitle);
+		}
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(
@@ -112,5 +125,25 @@ public class GameThread extends Thread {
 		// Display the window.
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	public void MarkasPrimaryServer() {
+		if (this.frame == null) {
+			this.title = this.initialTitle + "(primary)";
+		}
+		String title = frame.getTitle();
+		if (!title.contains("primary")) {
+			frame.setTitle(this.initialTitle + "(primary)");
+		}
+	}
+
+	public void MarkasBackupServer() {
+		if (this.frame == null) {
+			this.title = this.initialTitle + "(backup)";
+		}
+		String title = frame.getTitle();
+		if (!title.contains("backup")) {
+			frame.setTitle(this.initialTitle + "(backup)");
+		}
 	}
 }
