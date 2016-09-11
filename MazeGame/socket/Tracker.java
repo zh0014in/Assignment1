@@ -23,15 +23,16 @@ class Tracker {
 				try {
 					socket = serverSocket.accept();
 					
-					String playerName = "Player" + count;
+					
 					String playerIP = socket.getInetAddress().toString().replace("/", "");
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					
-			        String playerPort = in.readLine();
-			        String[] playersToken = playerPort.split(";");
-			        
+			        String msg = in.readLine();
+			        String[] playersToken = msg.split("-");
+			        String playerName = playersToken[0];
+			        String playerPort = playersToken[1];
 			        playerInfo +=  count + "-" + playerName + "-" + playerIP + "-" + playerPort + ";";
-			        System.out.println("==>Get new players infomation: " + playerInfo);
+			        System.out.println("==>Get new players infomation: " + count + "-" + playerName + "-" + playerIP + "-" + playerPort);
 					String message = ""+ N + "-" + K + ";" + playerInfo;
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 					out.println(message);
@@ -58,13 +59,11 @@ class PlayerConnection extends Thread{
 	}
 	
 	public void run(){
-		System.out.println("-->1321413");
 		while(true){
 	        String msg;
 			try {
 				msg = this.in.readLine();
 				String[] playersToken = msg.split(";");
-				System.out.println("-->1321413adsafssf   "+playersToken);
 				if(playersToken[0].equals("IF")){
 		        	Tracker.playerInfo = msg.substring(3);
 		        	System.out.println("-->Get updated players infomation: " + Tracker.playerInfo);
