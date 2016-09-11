@@ -9,6 +9,7 @@ public class Game implements ServerEventListener {
 	public static PrintWriter out;
 	private ServerThread serverThread;
 	private Player localPlayer;
+	private Maze maze;
 	
 	public static void main(String args[]) {
 		try {
@@ -59,15 +60,11 @@ public class Game implements ServerEventListener {
 			int k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
 			
+			// initialize maze here
+			this.maze = new Maze(n, k);
+			
 			int currentExistingPlayers = trackerMessages.length -1;
 			System.out.println("Total Players Number: " + currentExistingPlayers);
-			
-			if (currentExistingPlayers == 1){
-				serverThread.isPrimary = true;
-				System.out.println("============PRIMARY SERVER===============");
-			}
-//			if (currentExistingPlayers == 2)
-//				serverThread.isBackup = true;
 			
 			Player[] playerList = parseTrackerInfo(n, k, trackerMessages);
 			
@@ -78,8 +75,8 @@ public class Game implements ServerEventListener {
 			try {
 				Connect2Server c2s = new Connect2Server(playerList, this.localPlayer);
 				c2s.start();
-				
-				GameThread gameThread = new GameThread(n,k, this.localPlayer, playerList);
+		
+				GameThread gameThread = new GameThread(this.maze, this.localPlayer, playerList);
 				gameThread.start();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -90,6 +87,8 @@ public class Game implements ServerEventListener {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -107,6 +106,13 @@ public class Game implements ServerEventListener {
 			 System.out.println("Player Info: " + playerSequenceNumber + " " + playerName + " " + playerIP + " " + playerPort);
 		 }
 		 return playerList;
+	}
+
+	@Override
+	public void onPrimaryServerUpEvent() {
+		// pass maze to server thread
+		System.out.println("Primary server is up");
+		this.serverThread.setMaze(this.maze);
 	}
 }
 

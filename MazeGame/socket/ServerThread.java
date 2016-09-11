@@ -21,6 +21,7 @@ public class ServerThread extends Thread {
 	public boolean isBackup = false;
 	private DataOutputStream out2Backup = null;
 	private ServerEventListener listener;
+	private Maze maze;
 //	private Ping ping;
 	
 	public static ArrayList<Player> playerList = new ArrayList<Player>();
@@ -33,6 +34,10 @@ public class ServerThread extends Thread {
 	
 	public void setServerEventListener (ServerEventListener listener) {
 	    this.listener = listener;
+	}
+	
+	public void setMaze(Maze maze){
+		this.maze = maze;
 	}
 
 	public void run() {
@@ -50,6 +55,10 @@ public class ServerThread extends Thread {
 			while (true) {
 				try {
 					clientSocket = serverSocket.accept();
+					if(listener != null && !isPrimary){
+						listener.onPrimaryServerUpEvent();
+						isPrimary = true;
+					}
 					String clientAddress = clientSocket.getRemoteSocketAddress().toString();
 					int clientPort = clientSocket.getPort();
 					System.out.println("Player " + clientAddress + ":" + clientPort + " accepted.");
