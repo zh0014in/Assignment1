@@ -130,6 +130,7 @@ public class GameThread extends Thread {
 	public void MarkasPrimaryServer() {
 		if (this.frame == null) {
 			this.title = this.initialTitle + "(primary)";
+			return;
 		}
 		String title = frame.getTitle();
 		if (!title.contains("primary")) {
@@ -140,6 +141,7 @@ public class GameThread extends Thread {
 	public void MarkasBackupServer() {
 		if (this.frame == null) {
 			this.title = this.initialTitle + "(backup)";
+			return;
 		}
 		String title = frame.getTitle();
 		if (!title.contains("backup")) {
