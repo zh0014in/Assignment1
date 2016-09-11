@@ -24,8 +24,8 @@ public class GameThread extends Thread {
 	private Socket conn2Server;
 	public GameThread() {}
 
-	public GameThread(int mazeSize, int treasureCount, Player localPlayer,  Player[] playerList) throws Exception {
-		this.maze = new Maze(mazeSize, treasureCount);
+	public GameThread(Maze maze,Player localPlayer,  Player[] playerList) throws Exception {
+		this.maze = maze;
 		this.localPlayer = localPlayer;
 		this.playerList = playerList;
 	}

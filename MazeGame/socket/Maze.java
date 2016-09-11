@@ -86,11 +86,11 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		// returns true: player meets treasure
-		public boolean enter(Player player) throws CellOccupiedException {
+		public boolean enter(Player player) throws Exception {
 			synchronized (Cell.class) {
 				if (this.player != null) {
 					// the cell has been occupied by a player, you cannot enter
-					throw new CellOccupiedException("The cell has been occupied!");
+					throw new Exception("The cell has been occupied!");
 				}
 				this.player = player;
 				if (this.hasTreasure) {
