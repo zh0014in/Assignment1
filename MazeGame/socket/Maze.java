@@ -320,7 +320,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public void fromString(String input) throws Exception {
-		System.out.println("client maze update with maze msg: " + input);
 		input = input.substring(3);// remove MZ; tag
 		String[] info = input.split(";");
 		if (info.length != this.cells.length * this.cells[0].length) {

@@ -33,6 +33,7 @@ public class GameThread extends Thread {
 	public GameThread(String name){
 		this.name = name;
 		this.initialTitle = "Game-" + this.name;
+		frame = new JFrame(this.initialTitle);
 	}
 	
 	public void setMazeSize(int n){
@@ -53,7 +54,7 @@ public class GameThread extends Thread {
 	}
 
 	public void run() {
-		createAndShowGUI();
+		showGUI();
 		boolean looping = true;
 		Scanner command = new Scanner(System.in);
 
@@ -106,14 +107,8 @@ public class GameThread extends Thread {
 		System.exit(0);
 	}
 
-	private void createAndShowGUI() {
+	private void showGUI() {
 		// Create and set up the window.
-		if (!this.title.isEmpty()) {
-			frame = new JFrame(this.title);
-		}
-		else{
-			frame = new JFrame(this.initialTitle);
-		}
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(
@@ -128,10 +123,6 @@ public class GameThread extends Thread {
 	}
 
 	public void MarkasPrimaryServer() {
-		if (this.frame == null) {
-			this.title = this.initialTitle + "(primary)";
-			return;
-		}
 		String title = frame.getTitle();
 		if (!title.contains("primary")) {
 			frame.setTitle(this.initialTitle + "(primary)");
@@ -139,10 +130,6 @@ public class GameThread extends Thread {
 	}
 
 	public void MarkasBackupServer() {
-		if (this.frame == null) {
-			this.title = this.initialTitle + "(backup)";
-			return;
-		}
 		String title = frame.getTitle();
 		if (!title.contains("backup")) {
 			frame.setTitle(this.initialTitle + "(backup)");
