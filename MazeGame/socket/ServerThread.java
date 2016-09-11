@@ -179,6 +179,7 @@ class PlayerThread extends Thread{
 //			
 //	        ServerThread.playerList.add(remotePlayer);
             if(ServerThread.addNewPlayer(curPlayer)){
+            	ServerThread.maze.JoinGame(curPlayer);
             	System.out.println("Player Added: "+ remotePlayer.toStr());
             }
             else{

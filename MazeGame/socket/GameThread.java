@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 
 public class GameThread extends Thread {
 	private Maze maze;
-	private Player localPlayer;
 	private Socket conn;
 	private Socket conn2Server;
 	private DataOutputStream out;
@@ -26,9 +25,8 @@ public class GameThread extends Thread {
 	public GameThread() {
 	}
 
-	public GameThread(Maze maze, Player localPlayer) throws Exception {
+	public GameThread(Maze maze) throws Exception {
 		this.maze = maze;
-		this.localPlayer = localPlayer;
 	}
 
 	public void setOutputStream(DataOutputStream out) {
@@ -37,9 +35,6 @@ public class GameThread extends Thread {
 
 	public void run() {
 		createAndShowGUI();
-		// Question: we need to get server approve you can move the we can move
-		// right?
-		maze.JoinGame(this.localPlayer);
 		boolean looping = true;
 		Scanner command = new Scanner(System.in);
 

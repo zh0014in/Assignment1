@@ -78,7 +78,7 @@ public class Game implements ServerEventListener {
 				c2s.setServerEventListener(this);
 				c2s.start();
 		
-				gameThread = new GameThread(this.maze, this.localPlayer);
+				gameThread = new GameThread(this.maze);
 				gameThread.start();
 				
 			} catch (Exception e) {
