@@ -32,7 +32,7 @@ public class GameThread extends Thread {
 
 	public GameThread(String name){
 		this.name = name;
-		this.initialTitle = "Game-" + this.name;
+		this.initialTitle = this.name;
 		frame = new JFrame(this.initialTitle);
 	}
 	

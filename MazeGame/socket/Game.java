@@ -31,7 +31,7 @@ public class Game implements ServerEventListener {
 
 	public Game(String name) {
 		serverThread = new ServerThread();
-		gameThread = new GameThread(this.name);
+		gameThread = new GameThread(name);
 		this.name = name;
 		this.localPlayer = null;
 		serverThread.setServerEventListener(this);
@@ -39,7 +39,7 @@ public class Game implements ServerEventListener {
 
 	public Game(String ip, int port, String name) {
 		serverThread = new ServerThread();
-		gameThread = new GameThread(this.name);
+		gameThread = new GameThread(name);
 		this.name = name;
 		this.localPlayer = null;
 		serverThread.setServerEventListener(this);
