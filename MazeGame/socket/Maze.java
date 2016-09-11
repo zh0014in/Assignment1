@@ -1,5 +1,6 @@
 package MazeGame.socket;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -147,15 +148,33 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 	}
 
-	private Cell[][] cells;
+	class PlayersScorePanel extends JPanel{
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			// Draw Text
+			int count = 0;
+			for(int i =0; i < cells.length; i++){
+				for(int j = 0; j < cells[0].length; j++){
+					if(cells[i][j].getHasPlayer()){
+						g.drawString(cells[i][j].player.getName() + ": " + cells[i][j].player.getScore(), 0, 10 + 10*count);
+						count++;
+					}
+				}
+			}
+		}
+	}
+	protected Cell[][] cells;
 
 	public Maze() {
-		setLayout(new GridBagLayout());
+		setLayout(new BorderLayout());
 	}
 
 	public Maze(int mazeSize) {
 		this();
 
+		JPanel mazePanel = new JPanel();
+		mazePanel.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		this.cells = new Cell[mazeSize][mazeSize];
 		for (int row = 0; row < mazeSize; row++) {
@@ -181,9 +200,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 					}
 				}
 				this.cells[row][col].setBorder(border);
-				add(this.cells[row][col], gbc);
+				mazePanel.add(this.cells[row][col], gbc);
 			}
 		}
+		PlayersScorePanel scorePanel = new PlayersScorePanel();
+		scorePanel.setPreferredSize(new Dimension(100,500));
+		add(mazePanel, BorderLayout.CENTER);
+		add(scorePanel, BorderLayout.WEST);
 	}
 
 	// first server will init with this
