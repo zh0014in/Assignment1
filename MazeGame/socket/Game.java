@@ -8,6 +8,7 @@ public class Game implements ServerEventListener {
 	Socket playerClientSkt2Tracker;
 	public static PrintWriter out;
 	private ServerThread serverThread;
+	private GameThread gameThread;
 	private Player localPlayer;
 	private Maze maze;
 	
@@ -74,10 +75,12 @@ public class Game implements ServerEventListener {
 			// After the primary and backup server is up, create the local Game
 			try {
 				Connect2Server c2s = new Connect2Server(playerList, this.localPlayer);
+				c2s.setServerEventListener(this);
 				c2s.start();
 		
-				GameThread gameThread = new GameThread(this.maze, this.localPlayer, playerList);
+				gameThread = new GameThread(this.maze, this.localPlayer);
 				gameThread.start();
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -114,6 +117,11 @@ public class Game implements ServerEventListener {
 		System.out.println("Primary server is up");
 		this.serverThread.setMaze(this.maze);
 	}
+
+	@Override
+	public void onPrimaryServerFoundEvent(DataOutputStream out) {
+		gameThread.setOutputStream(out);
+	}
 }
 
 
@@ -122,13 +130,20 @@ class Connect2Server extends Thread{
 	private Player localPlayer;
 	private Player[] playerList;
 	private Socket conn2Server;
+	private ServerEventListener listener;
 	
+
 	public Connect2Server(Player[] playerList, Player localPlayer){
 		this.localPlayer = localPlayer;
 		this.playerList = playerList;
 	}
+
+	public void setServerEventListener (ServerEventListener listener) {
+	    this.listener = listener;
+	}
 	
 	public void run(){
+		DataOutputStream out;
 		while(true){
 			try {
 				// find the actual primary server
@@ -150,9 +165,14 @@ class Connect2Server extends Thread{
 
 				
 				// Send local player to server
-				DataOutputStream out = new DataOutputStream(this.conn2Server.getOutputStream());
+				out = new DataOutputStream(this.conn2Server.getOutputStream());
 		        out.writeBytes(this.localPlayer.toStr() + "\n");
 		        out.flush();
+		        
+		        if(this.listener != null){
+		        	// client found a primary server
+		        	this.listener.onPrimaryServerFoundEvent(out);
+		        }
 		        
 		        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
 		        try{

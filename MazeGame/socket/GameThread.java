@@ -20,20 +20,20 @@ public class GameThread extends Thread {
 	private Maze maze;
 	private Player localPlayer;
 	private Socket conn;
-	private Player[] playerList;
 	private Socket conn2Server;
+	private DataOutputStream out;
 	public GameThread() {}
 
-	public GameThread(Maze maze,Player localPlayer,  Player[] playerList) throws Exception {
+	public GameThread(Maze maze,Player localPlayer) throws Exception {
 		this.maze = maze;
 		this.localPlayer = localPlayer;
-		this.playerList = playerList;
+	}
+	
+	public void setOutputStream(DataOutputStream out){
+		this.out = out;
 	}
 
 	public void run() {
-//		Connect2Server c2s = new Connect2Server(this.playerList, this.localPlayer);
-//		c2s.start();
-		
 		createAndShowGUI();
 		// Question: we need to get server approve you can move the we can move right?
 		maze.JoinGame(this.localPlayer);
@@ -85,83 +85,3 @@ public class GameThread extends Thread {
 		frame.setVisible(true);
 	}
 }
-
-//class Connect2Server extends Thread{
-//	BufferedReader inFromServer;
-//	private Player localPlayer;
-//	private Player[] playerList;
-//	private Socket conn2Server;
-//	
-//	public Connect2Server(Player[] playerList, Player localPlayer){
-//		this.localPlayer = localPlayer;
-//		this.playerList = playerList;
-//	}
-//	
-//	public void run(){
-//		while(true){
-//			try {
-//				// find the actual primary server
-//				Player primaryServer = null;
-//				int primaryServeIndex = 0;
-//				for(int i=0; i<playerList.length; i++){
-//					primaryServer = playerList[i];
-//					try {
-//						System.out.println("LocalPlayer try to connect to " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
-//						this.conn2Server = new Socket(primaryServer.getIp(), primaryServer.getPort());
-//						System.out.println("LocalPlayer find primary server: " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
-//						primaryServeIndex = i;
-//						break;
-//					} catch (Exception e) {
-//						ServerThread.removePlayer(primaryServer);
-//						System.out.println("Connect to " + primaryServer.getName() + " failed! Try next one!");
-//					}
-//				}
-//
-//				
-//				// Send local player to server
-//				DataOutputStream out = new DataOutputStream(this.conn2Server.getOutputStream());
-//		        out.writeBytes(this.localPlayer.toStr() + "\n");
-//		        out.flush();
-//		        
-//		        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
-//		        try{
-//			        while(true){
-//			        	// receive the full list of players
-//			        	String msg = inFromServer.readLine();
-//			        	String[] msgToken = msg.split(";");
-//			        	
-//			        	if (msgToken[0].equals("BK")){
-//			        		System.out.println("BackupServer received backup info: " + msg);
-////			        		if (msgToken[1].equals("IF")){
-////			        			for(int i=2; i<msgToken.length; i++){
-////			        				Player tmp = new Player(msgToken[i]);
-////			        				if(ServerThread.addNewPlayer(tmp)){
-////			        					System.out.println("==>Player "+ msgToken[i] +" added in list");
-////			        				}
-////			        				else
-////			        					System.out.println("Player "+ msgToken[i] +" already in list");
-////			        			}
-////			        		}
-//			        		// if = MZ then back up maze info
-//			        	}
-//			        	else if (msgToken[0].equals("IF")){
-//			        		System.out.println("LocalPlayer receive full list of current players: " + msg);
-//			        	}
-//			        	else if (msgToken[0] == "MZ"){
-//			        		System.out.println("LocalPlayer receive maze info: " + msg);
-//			        	}
-//			        	else
-//			    			System.out.println("Unkown message received: " + msg);
-//			        }
-//		        } catch (IOException e) {
-//					// TODO Auto-generated catch block
-//		        	ServerThread.removePlayer(primaryServer);
-//					System.out.println("Primary Server down!");
-//				}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-//}
