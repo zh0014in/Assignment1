@@ -103,7 +103,6 @@ public class ServerThread extends Thread {
 		} catch(Exception e){
 			if(ServerThread.backupServer != null){
 				ServerThread.playerList.remove(ServerThread.backupServer);
-				
 			}
 			if(ServerThread.findBackupServer(ServerThread.portNumber)){
 				try {
@@ -172,12 +171,7 @@ class PlayerThread extends Thread{
 	        remotePlayer.connOnServer = this.socket;
             remotePlayer.outToClient = outToClient;
             curPlayer = remotePlayer;
-            
-//			if(!ServerThread.playerList.contains(curPlayer)){
-//				ServerThread.playerList.add(curPlayer);
-//			}
-//			
-//	        ServerThread.playerList.add(remotePlayer);
+
             if(ServerThread.addNewPlayer(curPlayer)){
             	ServerThread.maze.JoinGame(curPlayer);
             	System.out.println("Player Added: "+ remotePlayer.toStr());
@@ -192,7 +186,9 @@ class PlayerThread extends Thread{
 			}
             
             ServerThread.sendMsgToBackUp(fullListString);
-            
+            System.out.println("1==========-->1321413" +fullListString);
+            Game.out.println(fullListString);
+            System.out.println("2==========-->1321413");
 	        outToClient.writeBytes(fullListString + "\n");
 	        outToClient.flush();
             
@@ -226,6 +222,7 @@ class PlayerThread extends Thread{
 				outToClient.writeBytes(ServerThread.maze.toString()+"\n");
 				outToClient.flush();
     		}
+            
 		} catch (IOException e) {
 			ServerThread.playerList.remove(curPlayer);
 			if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
@@ -235,6 +232,9 @@ class PlayerThread extends Thread{
 				fullListString += p.toStr() + ";";
 			}
             ServerThread.sendMsgToBackUp(fullListString);
+            System.out.println("3==========-->1321413");
+            Game.out.println(fullListString);
+            System.out.println("4==========-->1321413");
 			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}

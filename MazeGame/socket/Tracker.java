@@ -8,16 +8,16 @@ import java.util.List;
 class Tracker {
 	public static int seqID = 0;
 	public static String[] playerParameters = new String[200];
-	public static List<String> playerParametersList;
 	
+	public static String playerInfo = "";
+	public static int count = 0;
 	public static void main(String args[]) {
 		try {
 			int port = 8000; //Integer.parseInt(args[0]);
 			int N = 10; //Integer.parseInt(args[1]);
 			int K = 2; //Integer.parseInt(args[2]);
-			int count = 0;
+			
 			Socket socket;
-			Socket clientSocket = null;
 			ServerSocket serverSocket = new ServerSocket(port);
 			while (true) {
 				try {
@@ -27,49 +27,17 @@ class Tracker {
 					String playerIP = socket.getInetAddress().toString().replace("/", "");
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					
-			        while (!in.ready()) {}
 			        String playerPort = in.readLine();
+			        String[] playersToken = playerPort.split(";");
 			        
-			        playerParameters[count] = playerName + "," + count + "," + playerIP + "," + playerPort;
-			        count += 1;
-			        
-			        String[] newPlayerParameters = Arrays.copyOfRange(playerParameters, 0, count);
-
-			        String playersList = String.join(";", newPlayerParameters);
-			        
-					String message = ""+ N + "," + K + ";" + playersList;
+			        playerInfo +=  count + "-" + playerName + "-" + playerIP + "-" + playerPort + ";";
+			        System.out.println("==>Get new players infomation: " + playerInfo);
+					String message = ""+ N + "-" + K + ";" + playerInfo;
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 					out.println(message);
-					
-			        socket.close();
-//					if (seqID >= 200) {
-//						System.out.println("Players Number beyond the limit 200");
-//					}
-//					else {
-//						clientSocket = serverSocket.accept();						
-//						String playerNum = "Player " + seqID;
-//						String playerIP = clientSocket.getInetAddress().toString().replace("/", "");
-//						System.out.println("Player Num: " + playerNum);
-//						System.out.println("PlayerIP: " + playerIP);
-//						
-//						BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//						
-//				        while (!in.ready()) {}
-//				        String clientReq = in.readLine();
-//				        System.out.println("Server received message: " + clientReq);
-//				        //getPlayers(clientReq);
-//				        playerParameters[seqID] = seqID + "," + clientReq;
-//				        seqID += 1;
-//				        
-//				        String[] newPlayerParameters = Arrays.copyOfRange(playerParameters, 0, seqID);
-//				        String playersList = String.join(";", newPlayerParameters);
-//				        System.out.println("--" + playersList);
-//				        String message = ""+ N + "," + K + ";" + playersList;
-//						PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-//						out.println(message);
-//						clientSocket.close();
-//					}
-				} 
+					count += 1;
+					(new PlayerConnection(in)).start();
+				}
 				catch (IOException e) {
 					System.out.println("I/O error: " + e);
 					serverSocket.close();
@@ -81,9 +49,45 @@ class Tracker {
 		}
 	}
 	
-	// TODO, may need to handle the update from Primary Server
-	private static String getPlayers(String clientReq) {
-		String output = "";
-		return output;
+}
+
+class PlayerConnection extends Thread{
+	BufferedReader in;
+	public PlayerConnection(BufferedReader in){
+		this.in= in;
 	}
-}	// Class Tracker
+	
+	public void run(){
+		System.out.println("-->1321413");
+		while(true){
+	        String msg;
+			try {
+				msg = this.in.readLine();
+				String[] playersToken = msg.split(";");
+				System.out.println("-->1321413adsafssf   "+playersToken);
+				if(playersToken[0].equals("IF")){
+		        	Tracker.playerInfo = msg.substring(3);
+		        	System.out.println("-->Get updated players infomation: " + Tracker.playerInfo);
+		        }
+			} catch (IOException e) {
+				
+				break;
+			}
+		}
+	}
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
