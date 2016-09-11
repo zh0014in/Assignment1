@@ -102,13 +102,28 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 				return false;
 			}
 		}
-
-		public void leave() throws Exception {
-			if (this.player != null) {
+		
+		public boolean leaveAndEnter(Cell newCell, Player player) throws Exception{
+			synchronized (Cell.class) {
+				if (newCell.player != null) {
+					// the cell has been occupied by a player, you cannot enter
+					throw new Exception("The cell has been occupied!");
+				}
+				if(this.player == null){
+					throw new Exception("The cell is not occupied with any player!");
+				}
+				newCell.player = player;
 				this.player = null;
-				return;
+				if (newCell.hasTreasure) {
+					newCell.hasTreasure = false;
+					player.findTreasure();
+					if (listener != null) {
+						listener.onTreasureFoundEvent();
+					}
+					return true;
+				}
+				return false;
 			}
-			throw new Exception("The cell is not occupied with any player!");
 		}
 
 		public String toString() {
@@ -246,13 +261,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public boolean MoveWest(Player player) {
+		System.out.println("Player " + player.getName() + " moving west");
 		try {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getRow();
 			int y = cell.getCol();
 			if (x > 0) {
-				cell.leave();
-				this.cells[x - 1][y].enter(player);
+				cell.leaveAndEnter(this.cells[x - 1][y], player);
 				return true;
 			}
 			return false;
@@ -263,13 +278,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public boolean MoveSouth(Player player) {
+		System.out.println("Player " + player.getName() + " moving south");
 		try {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getRow();
 			int y = cell.getCol();
 			if (y < getMazeSize() - 1) {
-				cell.leave();
-				this.cells[x][y + 1].enter(player);
+				cell.leaveAndEnter(this.cells[x][y + 1], player);
 				return true;
 			}
 			return false;
@@ -280,13 +295,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public boolean MoveEast(Player player) {
+		System.out.println("Player " + player.getName() + " moving east");
 		try {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getRow();
 			int y = cell.getCol();
 			if (x < getMazeSize() - 1) {
-				cell.leave();
-				this.cells[x + 1][y].enter(player);
+				cell.leaveAndEnter(this.cells[x + 1][y], player);
 				return true;
 			}
 			return false;
@@ -297,13 +312,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public boolean MoveNorth(Player player) {
+		System.out.println("Player " + player.getName() + " moving north");
 		try {
 			Cell cell = getCellWithPlayer(player);
 			int x = cell.getRow();
 			int y = cell.getCol();
 			if (y > 0) {
-				cell.leave();
-				this.cells[x][y - 1].enter(player);
+				cell.leaveAndEnter(this.cells[x][y - 1], player);
 				return true;
 			}
 			return false;

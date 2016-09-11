@@ -16,11 +16,12 @@ public class Game implements ServerEventListener {
 
 	public static void main(String args[]) {
 		try {
-			 String name = "A0";
-			 Game game = new Game(name);
+			 //String name = "A0";
+			String name = args[0];
+			Game game = new Game(name);
 //			String ip = args[0];
 //			int port = Integer.parseInt(args[1]);
-//			String name = args[2];
+			
 //			Game game = new Game(ip, port, name);
 			game.begin();
 		} catch (Exception e) {
