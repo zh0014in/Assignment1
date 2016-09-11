@@ -36,7 +36,6 @@ public class ServerThread extends Thread {
 	}
 
 	public void run() {
-		
 		try {
 			ServerSocket serverSocket = new ServerSocket(portNumber);
 			portNumber = serverSocket.getLocalPort();
@@ -112,8 +111,16 @@ public class ServerThread extends Thread {
 	
 	public static boolean addNewPlayer(Player tmp){
 		for(int i=0; i < ServerThread.playerList.size(); i++){
-			if(ServerThread.playerList.get(i).sequenceNumber > tmp.sequenceNumber){
+			Player curPlayer = ServerThread.playerList.get(i);
+			if(curPlayer.sequenceNumber > tmp.sequenceNumber){
 				ServerThread.playerList.add(i, tmp);
+				System.out.println("Adding player: insert player: " + tmp.toStr() );
+				return true;
+			}
+			
+			if (curPlayer.sequenceNumber == tmp.sequenceNumber){
+				curPlayer = tmp;
+				System.out.println("Adding player: update old player: " + tmp.toStr() );
 				return true;
 			}
 		}
@@ -124,16 +131,6 @@ public class ServerThread extends Thread {
 			fullListString += p.toStr() + ";";
 		}
         System.out.println("log: " + fullListString);
-//		for(Player p: ServerThread.playerList){
-//			if(p.toStr().equals(tmp.toStr())){
-//				if(p.isBackup)
-//					System.out.println("=================ahhahah");
-//				p = tmp;
-//				return false;
-//			}
-//			
-//		}
-//		ServerThread.playerList.add(tmp);
 		return true;
 	}
 	

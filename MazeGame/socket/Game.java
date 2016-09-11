@@ -2,6 +2,7 @@ package MazeGame.socket;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Game implements ServerEventListener {
 	Socket playerClientSkt2Tracker;
@@ -77,7 +78,6 @@ public class Game implements ServerEventListener {
 			try {
 				Connect2Server c2s = new Connect2Server(playerList, this.localPlayer);
 				c2s.start();
-				
 				
 				GameThread gameThread = new GameThread(n,k, this.localPlayer, playerList);
 				gameThread.start();
@@ -157,17 +157,19 @@ class Connect2Server extends Thread{
 			        	
 			        	if (msgToken[0].equals("BK")){
 			        		System.out.println("BackupServer received backup info: " + msg);
-//			        		if (msgToken[1].equals("IF")){
-//			        			for(int i=2; i<msgToken.length; i++){
-//			        				Player tmp = new Player(msgToken[i]);
+			        		if (msgToken[1].equals("IF")){
+			        			ServerThread.playerList =  new ArrayList<Player>();
+			        			for(int i=2; i<msgToken.length; i++){
+			        				Player tmp = new Player(msgToken[i]);
+			        				ServerThread.addNewPlayer(tmp);
 //			        				if(ServerThread.addNewPlayer(tmp)){
 //			        					System.out.println("==>Player "+ msgToken[i] +" added in list");
 //			        				}
 //			        				else
 //			        					System.out.println("Player "+ msgToken[i] +" already in list");
-//			        			}
-//			        		}
-			        		// if = MZ then back up maze info
+			        			}
+			        		}
+//			        		 if = MZ then back up maze info
 			        	}
 			        	else if (msgToken[0].equals("IF")){
 			        		System.out.println("LocalPlayer receive full list of current players: " + msg);
