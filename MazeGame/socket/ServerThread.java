@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class ServerThread extends Thread {
 	// this is the master server thread
 	public static int portNumber = 0;
-	public boolean isPrimary = false;
+	public static boolean isPrimary = false;
 	public boolean isBackup = false;
 	private DataOutputStream out2Backup = null;
 	private ServerEventListener listener;
-	private Ping ping;
+//	private Ping ping;
 	
 	public static ArrayList<Player> playerList = new ArrayList<Player>();
 	public static Player backupServer = null;
@@ -44,8 +44,8 @@ public class ServerThread extends Thread {
 				listener.onServerSocketCreatedEvent();
 			}
 			System.out.println("Server listening on port " + portNumber);
-			ping = new Ping();
-			ping.start();
+//			ping = new Ping();
+//			ping.start();
 			
 			Socket clientSocket;
 			while (true) {
@@ -75,14 +75,16 @@ public class ServerThread extends Thread {
 	public static boolean findBackupServer(int portNumber){
 		for(int i=0; i< ServerThread.playerList.size(); i++){
 			if (ServerThread.playerList.get(i).getPort() == portNumber) {
-				System.out.println("Start to find backup server. " + i);
+				System.out.println("Try to find backup server." + portNumber);
 				for(int j=i+1; j<ServerThread.playerList.size(); j++){
 					backupServer = ServerThread.playerList.get(j);
 					backupServer.isBackup = true;
+					System.out.println("Find backupserver: " + backupServer.toStr());
 					return true;
 				}
 			}
 		}
+		System.out.println("Can not find backupserver");
 		return false;
 	}
 	
@@ -93,16 +95,55 @@ public class ServerThread extends Thread {
 		} catch(Exception e){
 			if(ServerThread.backupServer != null){
 				ServerThread.playerList.remove(ServerThread.backupServer);
+				
 			}
 			if(ServerThread.findBackupServer(ServerThread.portNumber)){
 				try {
-					ServerThread.backupServer.outToClient.writeBytes("BK;"+msg + "\n");
-					ServerThread.backupServer.outToClient.flush();
+					if(ServerThread.backupServer.outToClient != null){
+						ServerThread.backupServer.outToClient.writeBytes("BK;"+msg + "\n");
+						ServerThread.backupServer.outToClient.flush();
+					}
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					return;
 				}
         	}
+		}
+	}
+	
+	public static boolean addNewPlayer(Player tmp){
+		for(int i=0; i < ServerThread.playerList.size(); i++){
+			if(ServerThread.playerList.get(i).sequenceNumber > tmp.sequenceNumber){
+				ServerThread.playerList.add(i, tmp);
+				return true;
+			}
+		}
+		ServerThread.playerList.add(tmp);
+		
+		String fullListString = "";
+        for(Player p : ServerThread.playerList){
+			fullListString += p.toStr() + ";";
+		}
+        System.out.println("log: " + fullListString);
+//		for(Player p: ServerThread.playerList){
+//			if(p.toStr().equals(tmp.toStr())){
+//				if(p.isBackup)
+//					System.out.println("=================ahhahah");
+//				p = tmp;
+//				return false;
+//			}
+//			
+//		}
+//		ServerThread.playerList.add(tmp);
+		return true;
+	}
+	
+	public static void removePlayer(Player tmp){
+		for(Player p: ServerThread.playerList){
+			if(p.toStr().equals(tmp.toStr())){
+				ServerThread.playerList.remove(p);
+				System.out.println("Remove player "+p.toStr()+" from ServerThread");
+				break;
+			}
 		}
 	}
 }
@@ -121,60 +162,79 @@ class PlayerThread extends Thread{
 			inFromClient = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			
 	        String playerInfo = inFromClient.readLine();
-	        Player remotePlayer = Player.fromString(playerInfo);
+	        Player remotePlayer = new Player(playerInfo);
 	        remotePlayer.connOnServer = this.socket;
             remotePlayer.outToClient = outToClient;
             curPlayer = remotePlayer;
-	        ServerThread.playerList.add(remotePlayer);
-            System.out.println("Player Added: "+ remotePlayer.toStr());
-            String fullListString = "IF;";
             
+//			if(!ServerThread.playerList.contains(curPlayer)){
+//				ServerThread.playerList.add(curPlayer);
+//			}
+//			
+//	        ServerThread.playerList.add(remotePlayer);
+            if(ServerThread.addNewPlayer(curPlayer)){
+            	System.out.println("Player Added: "+ remotePlayer.toStr());
+            }
+            else{
+            	System.out.println("Player exists! : "+ remotePlayer.toStr());
+            }
+            
+            String fullListString = "IF;";
             for(Player p : ServerThread.playerList){
 				fullListString += p.toStr() + ";";
 			}
-            outToClient.writeBytes(fullListString + "\n");
-            outToClient.flush();
             
             ServerThread.sendMsgToBackUp(fullListString);
+            
+	        outToClient.writeBytes(fullListString + "\n");
+	        outToClient.flush();
             
             while(true){
 	        	String msg = inFromClient.readLine();
 	        	System.out.println("Server receive  " + msg + "from " + curPlayer.getName());
     		}
 		} catch (IOException e) {
-			System.out.println("Player disconnect");
+			ServerThread.playerList.remove(curPlayer);
+			if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
+				ServerThread.findBackupServer(ServerThread.portNumber);
+			String fullListString = "IF;";
+            for(Player p : ServerThread.playerList){
+				fullListString += p.toStr() + ";";
+			}
+            ServerThread.sendMsgToBackUp(fullListString);
+			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}
 }
 
-class Ping extends Thread{
-	public Ping(){}
-	
-	public void run(){
-		while(true){
-			try {
-				Thread.sleep(5000);
-				for(Player p: ServerThread.playerList){
-					try{
-						p.outToClient.writeBytes("PI;" + p.getName() + "\n");
-					}
-					catch(IOException e){
-						ServerThread.playerList.remove(p);
-						String msg = "IF;";
-						for(Player temp : ServerThread.playerList){
-							msg += temp.toStr() + ";";
-						}
-						ServerThread.sendMsgToBackUp(msg);
-						System.out.println("Player "+ p.getName() + " ping failed!!!");
-						break;
-					}
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-}
+//class Ping extends Thread{
+//	public Ping(){}
+//	
+//	public void run(){
+//		while(true){
+//			try {
+//				Thread.sleep(5000);
+//				for(Player p: ServerThread.playerList){
+//					try{
+//						p.outToClient.writeBytes("PI;" + p.getName() + "\n");
+//					}
+//					catch(IOException e){
+//						ServerThread.playerList.remove(p);
+//						String msg = "IF;";
+//						for(Player temp : ServerThread.playerList){
+//							msg += temp.toStr() + ";";
+//						}
+//						ServerThread.sendMsgToBackUp(msg);
+//						System.out.println("Player "+ p.getName() + " ping failed!!!");
+//						break;
+//					}
+//				}
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+//}
 
 

@@ -5,6 +5,7 @@ import java.net.*;
 
 public class Game implements ServerEventListener {
 	Socket playerClientSkt2Tracker;
+	public static PrintWriter out;
 	private ServerThread serverThread;
 	private Player localPlayer;
 	
@@ -36,7 +37,7 @@ public class Game implements ServerEventListener {
 		try {
 			playerClientSkt2Tracker = new Socket("localhost", 8000);
 
-			PrintWriter out = new PrintWriter(playerClientSkt2Tracker.getOutputStream(), true);
+			out = new PrintWriter(playerClientSkt2Tracker.getOutputStream(), true);
 			// send its own port number to Tracker
 			String message = "" + portNumber;
 			out.println(message);

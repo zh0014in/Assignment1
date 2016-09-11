@@ -55,7 +55,7 @@ public class Player implements Serializable {
 
 	
 	public String toStr(){
-		return "" + this.sequenceNumber + "-" + this.name + "-" + this.ip + "-"+ this.port + "-"+ this.score + "-" + this.informationSeqNumber;
+		return "" + this.sequenceNumber + "-" + this.name + "-" + this.ip + "-"+ this.port; // + "-"+ this.score + "-" + this.informationSeqNumber;
 	}
 	
 	public void fromString(String playerInfo){
@@ -64,7 +64,7 @@ public class Player implements Serializable {
 		this.name = info[1];
 		this.ip = info[2];
 		this.port = Integer.parseInt(info[3]);
-		this.score = Integer.parseInt(info[4]);
-		this.informationSeqNumber = Integer.parseInt(info[5]);
+//		this.score = Integer.parseInt(info[4]);
+//		this.informationSeqNumber = Integer.parseInt(info[5]);
 	}
 }
