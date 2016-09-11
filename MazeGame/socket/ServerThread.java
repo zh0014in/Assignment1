@@ -21,7 +21,7 @@ public class ServerThread extends Thread {
 	public boolean isBackup = false;
 	private DataOutputStream out2Backup = null;
 	private ServerEventListener listener;
-	private Maze maze;
+	protected static Maze maze;
 //	private Ping ping;
 	
 	public static ArrayList<Player> playerList = new ArrayList<Player>();
@@ -196,8 +196,34 @@ class PlayerThread extends Thread{
 	        outToClient.flush();
             
             while(true){
-	        	String msg = inFromClient.readLine();
-	        	System.out.println("Server receive  " + msg + "from " + curPlayer.getName());
+	        	String command = inFromClient.readLine().trim();
+	        	System.out.println("Server receive  " + command + "from " + curPlayer.getName());
+	        	int newCommand = Integer.parseInt(command);
+				switch (newCommand) {
+				case 9:
+					break;
+				case 0:
+					// refresh position, ask server for update
+					break;
+				case 1:
+					ServerThread.maze.MoveWest(curPlayer);
+					break;
+				case 2:
+					ServerThread.maze.MoveSouth(curPlayer);
+					break;
+				case 3:
+					ServerThread.maze.MoveEast(curPlayer);
+					break;
+				case 4:
+					ServerThread.maze.MoveNorth(curPlayer);
+					break;
+				default:
+					System.out.println("Invalid input: " + newCommand);
+					break;
+				}
+				// send back the maze
+				outToClient.writeChars(ServerThread.maze.toString());
+				outToClient.flush();
     		}
 		} catch (IOException e) {
 			ServerThread.playerList.remove(curPlayer);
