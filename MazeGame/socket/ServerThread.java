@@ -36,8 +36,13 @@ public class ServerThread extends Thread {
 	    this.listener = listener;
 	}
 	
-	public void setMaze(Maze maze){
-		this.maze = maze;
+	public void initializeMaze(int n, int k){
+		try {
+			this.maze = new Maze(n,k);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void run() {
@@ -190,6 +195,9 @@ class PlayerThread extends Thread{
 	        outToClient.writeBytes(fullListString + "\n");
 	        outToClient.flush();
             
+	        outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+			outToClient.flush();
+	        
             while(true){
 	        	String command = inFromClient.readLine().trim();
 	        	System.out.println("Server receive  " + command + "from " + curPlayer.getName());

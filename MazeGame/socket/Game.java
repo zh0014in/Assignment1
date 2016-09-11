@@ -9,7 +9,9 @@ public class Game implements ServerEventListener {
 	private ServerThread serverThread;
 	private GameThread gameThread;
 	private Player localPlayer;
-	private Maze maze;
+	private int n;
+	private int k;
+
 	private String name = "";
 	
 	public static void main(String args[]) {
@@ -51,7 +53,7 @@ public class Game implements ServerEventListener {
 		}
 		// -------------------------------------------------------------------//
 	}
-	
+
 	@Override
 	public void onServerSocketCreatedEvent() {
 		int portNumber = serverThread.getPortNumber();
@@ -70,34 +72,30 @@ public class Game implements ServerEventListener {
 			String trackerMessage = in.readLine();
 			System.out.println("Client received message from tracker: " + trackerMessage);
 			// close connection with Tracker after received all information
-			
+
 			String[] trackerMessages = trackerMessage.split(";");
 			// maze parameters: n and k
 			String[] mazeParameters = trackerMessages[0].split("-");
-			int n = Integer.parseInt(mazeParameters[0]);
-			int k = Integer.parseInt(mazeParameters[1]);
+			n = Integer.parseInt(mazeParameters[0]);
+			k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
-			
-			// initialize maze here
-			this.maze = new Maze(n, k);
-			
-			int currentExistingPlayers = trackerMessages.length -1;
+
+			int currentExistingPlayers = trackerMessages.length - 1;
 			System.out.println("Total Players Number: " + currentExistingPlayers);
-			
+
 			Player[] playerList = parseTrackerInfo(n, k, trackerMessages);
-			
-			this.localPlayer = playerList[currentExistingPlayers-1];
-			
-			
+
+			this.localPlayer = playerList[currentExistingPlayers - 1];
+
 			// After the primary and backup server is up, create the local Game
 			try {
 				ClientThread c2s = new ClientThread(playerList, this.localPlayer);
 				c2s.setServerEventListener(this);
 				c2s.start();
-		
-				gameThread = new GameThread(this.maze);
+
+				gameThread = new GameThread(n, k);
 				gameThread.start();
-				
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,31 +106,33 @@ public class Game implements ServerEventListener {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public Player[] parseTrackerInfo(int n, int k, String[] trackerMessages){
-		Player[] playerList = new Player[n*n + 500];
-		// start from i=1 because the first message is not a player info, i=0 is n and k
-		 for (int i=1; i < trackerMessages.length; i++ ){
-			 String[] singlePlayerParameters = trackerMessages[i].split("-");
-			 int playerSequenceNumber = Integer.parseInt(singlePlayerParameters[0]);
-			 String playerName = singlePlayerParameters[1];
-			 String playerIP = singlePlayerParameters[2];
-			 int playerPort = Integer.parseInt(singlePlayerParameters[3]);
-			 playerList[i-1] = new Player(playerSequenceNumber, playerName, playerIP, playerPort);
-			 System.out.println("Player Info: " + playerSequenceNumber + " " + playerName + " " + playerIP + " " + playerPort);
-		 }
-		 return playerList;
+
+	public Player[] parseTrackerInfo(int n, int k, String[] trackerMessages) {
+		Player[] playerList = new Player[n * n + 500];
+		// start from i=1 because the first message is not a player info, i=0 is
+		// n and k
+		for (int i = 1; i < trackerMessages.length; i++) {
+			String[] singlePlayerParameters = trackerMessages[i].split("-");
+			int playerSequenceNumber = Integer.parseInt(singlePlayerParameters[0]);
+			String playerName = singlePlayerParameters[1];
+			String playerIP = singlePlayerParameters[2];
+			int playerPort = Integer.parseInt(singlePlayerParameters[3]);
+			playerList[i - 1] = new Player(playerSequenceNumber, playerName, playerIP, playerPort);
+			System.out.println(
+					"Player Info: " + playerSequenceNumber + " " + playerName + " " + playerIP + " " + playerPort);
+		}
+		return playerList;
 	}
 
 	@Override
 	public void onPrimaryServerUpEvent() {
 		// pass maze to server thread
 		System.out.println("Primary server is up");
-		this.serverThread.setMaze(this.maze);
+		this.serverThread.initializeMaze(n, k);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class Game implements ServerEventListener {
 	@Override
 	public void onMazeStringReceived(String msg) {
 		try {
-			this.maze.fromString(msg);
+			gameThread.updateMaze(msg);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

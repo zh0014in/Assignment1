@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 public class GameThread extends Thread {
 	private Maze maze;
@@ -23,10 +24,25 @@ public class GameThread extends Thread {
 	private DataOutputStream out;
 
 	public GameThread() {
+		this.maze = new Maze();
 	}
 
-	public GameThread(Maze maze) throws Exception {
-		this.maze = maze;
+	public GameThread(int n, int k) throws Exception {
+		this.maze = new Maze(n);
+	}
+
+	public void updateMaze(String msg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				// *** Swing code can go here ***
+				try {
+					maze.fromString(msg);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public void setOutputStream(DataOutputStream out) {
@@ -42,14 +58,14 @@ public class GameThread extends Thread {
 			System.out.println(
 					"Enter value from these numbers: 0(refresh), 1(west), 2(south), 3(east), 4(north), 9(exit).");
 			try {
-				
+
 				int newCommand = command.nextInt();
-				
+
 				if (this.out == null) {
 					System.out.println("output stream not ready yet!");
 					continue;
 				}
-				
+
 				switch (newCommand) {
 				case 9:
 					// TODO: tell server player exit game
