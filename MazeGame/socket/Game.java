@@ -38,7 +38,6 @@ public class Game implements ServerEventListener {
 		int portNumber = serverThread.getPortNumber();
 		try {
 			playerClientSkt2Tracker = new Socket("localhost", 8000);
-
 			out = new PrintWriter(playerClientSkt2Tracker.getOutputStream(), true);
 			// send its own port number to Tracker
 			String message = "" + portNumber;
@@ -55,7 +54,7 @@ public class Game implements ServerEventListener {
 			
 			String[] trackerMessages = trackerMessage.split(";");
 			// maze parameters: n and k
-			String[] mazeParameters = trackerMessages[0].split(",");
+			String[] mazeParameters = trackerMessages[0].split("-");
 			int n = Integer.parseInt(mazeParameters[0]);
 			int k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
@@ -97,9 +96,9 @@ public class Game implements ServerEventListener {
 		Player[] playerList = new Player[n*n + 500];
 		// start from i=1 because the first message is not a player info, i=0 is n and k
 		 for (int i=1; i < trackerMessages.length; i++ ){
-			 String[] singlePlayerParameters = trackerMessages[i].split(",");
-			 String playerName = singlePlayerParameters[0];
-			 int playerSequenceNumber = Integer.parseInt(singlePlayerParameters[1]);
+			 String[] singlePlayerParameters = trackerMessages[i].split("-");
+			 int playerSequenceNumber = Integer.parseInt(singlePlayerParameters[0]);
+			 String playerName = singlePlayerParameters[1];
 			 String playerIP = singlePlayerParameters[2];
 			 int playerPort = Integer.parseInt(singlePlayerParameters[3]);
 			 playerList[i-1] = new Player(playerSequenceNumber, playerName, playerIP, playerPort);
