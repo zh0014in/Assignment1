@@ -217,7 +217,7 @@ class PlayerThread extends Thread{
 					break;
 				}
 				// send back the maze
-				outToClient.writeChars(ServerThread.maze.toString());
+				outToClient.writeBytes(ServerThread.maze.toString()+"\n");
 				outToClient.flush();
     		}
             

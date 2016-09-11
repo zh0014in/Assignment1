@@ -2,7 +2,6 @@ package MazeGame.socket;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 
 public class Game implements ServerEventListener {
 	Socket playerClientSkt2Tracker;
@@ -75,7 +74,7 @@ public class Game implements ServerEventListener {
 			
 			// After the primary and backup server is up, create the local Game
 			try {
-				Connect2Server c2s = new Connect2Server(playerList, this.localPlayer);
+				ClientThread c2s = new ClientThread(playerList, this.localPlayer);
 				c2s.setServerEventListener(this);
 				c2s.start();
 		
@@ -123,99 +122,14 @@ public class Game implements ServerEventListener {
 	public void onPrimaryServerFoundEvent(DataOutputStream out) {
 		gameThread.setOutputStream(out);
 	}
-}
 
-
-class Connect2Server extends Thread{
-	BufferedReader inFromServer;
-	private Player localPlayer;
-	private Player[] playerList;
-	private Socket conn2Server;
-	private ServerEventListener listener;
-	
-
-	public Connect2Server(Player[] playerList, Player localPlayer){
-		this.localPlayer = localPlayer;
-		this.playerList = playerList;
-	}
-
-	public void setServerEventListener (ServerEventListener listener) {
-	    this.listener = listener;
-	}
-	
-	public void run(){
-		DataOutputStream out;
-		while(true){
-			try {
-				// find the actual primary server
-				Player primaryServer = null;
-				int primaryServeIndex = 0;
-				for(int i=0; i<playerList.length; i++){
-					primaryServer = playerList[i];
-					try {
-						System.out.println("LocalPlayer try to connect to " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
-						this.conn2Server = new Socket(primaryServer.getIp(), primaryServer.getPort());
-						System.out.println("LocalPlayer find primary server: " + primaryServer.getName() + " " + primaryServer.getIp() + " " + primaryServer.getPort());
-						primaryServeIndex = i;
-						break;
-					} catch (Exception e) {
-						ServerThread.removePlayer(primaryServer);
-						System.out.println("Connect to " + primaryServer.getName() + " failed! Try next one!");
-					}
-				}
-
-				
-				// Send local player to server
-				out = new DataOutputStream(this.conn2Server.getOutputStream());
-		        out.writeBytes(this.localPlayer.toStr() + "\n");
-		        out.flush();
-		        
-		        if(this.listener != null){
-		        	// client found a primary server
-		        	this.listener.onPrimaryServerFoundEvent(out);
-		        }
-		        
-		        inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
-		        try{
-			        while(true){
-			        	// receive the full list of players
-			        	String msg = inFromServer.readLine();
-			        	String[] msgToken = msg.split(";");
-			        	
-			        	if (msgToken[0].equals("BK")){
-			        		System.out.println("BackupServer received backup info: " + msg);
-			        		if (msgToken[1].equals("IF")){
-			        			ServerThread.playerList =  new ArrayList<Player>();
-			        			for(int i=2; i<msgToken.length; i++){
-			        				Player tmp = new Player(msgToken[i]);
-			        				ServerThread.addNewPlayer(tmp);
-//			        				if(ServerThread.addNewPlayer(tmp)){
-//			        					System.out.println("==>Player "+ msgToken[i] +" added in list");
-//			        				}
-//			        				else
-//			        					System.out.println("Player "+ msgToken[i] +" already in list");
-			        			}
-			        		}
-//			        		 if = MZ then back up maze info
-			        	}
-			        	else if (msgToken[0].equals("IF")){
-			        		System.out.println("LocalPlayer receive full list of current players: " + msg);
-			        	}
-			        	else if (msgToken[0] == "MZ"){
-			        		System.out.println("LocalPlayer receive maze info: " + msg);
-			        	}
-			        	else
-			    			System.out.println("Unkown message received: " + msg);
-			        }
-		        } catch (IOException e) {
-					// TODO Auto-generated catch block
-		        	ServerThread.removePlayer(primaryServer);
-					System.out.println("Primary Server down!");
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	@Override
+	public void onMazeStringReceived(String msg) {
+		try {
+			this.maze.fromString(msg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

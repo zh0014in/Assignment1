@@ -6,4 +6,5 @@ public interface ServerEventListener {
 	void onServerSocketCreatedEvent ();
 	void onPrimaryServerUpEvent();
 	void onPrimaryServerFoundEvent(DataOutputStream out);
+	void onMazeStringReceived(String msg);
 }

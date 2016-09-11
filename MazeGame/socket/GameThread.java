@@ -42,11 +42,14 @@ public class GameThread extends Thread {
 			System.out.println(
 					"Enter value from these numbers: 0(refresh), 1(west), 2(south), 3(east), 4(north), 9(exit).");
 			try {
+				
+				int newCommand = command.nextInt();
+				
 				if (this.out == null) {
 					System.out.println("output stream not ready yet!");
 					continue;
 				}
-				int newCommand = command.nextInt();
+				
 				switch (newCommand) {
 				case 9:
 					// TODO: tell server player exit game

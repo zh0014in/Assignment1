@@ -112,21 +112,23 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 			throw new Exception("The cell is not occupied with any player!");
 		}
-		
-		public String toString(){
+
+		public String toString() {
 			String result = x + "," + y + "," + this.hasTreasure;
-			if(this.player != null){
+			if (this.player != null) {
 				result += "," + player.toStr();
 			}
 			return result;
 		}
-		
-		public void fromString(String input){
+
+		public void fromString(String input) {
 			String[] cellInfo = input.split(",");
 			this.x = Integer.parseInt(cellInfo[0]);
 			this.y = Integer.parseInt(cellInfo[1]);
 			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
-			this.player = new Player(cellInfo[3]);
+			if (cellInfo.length == 4) {
+				this.player = new Player(cellInfo[3]);
+			}
 		}
 
 	}
@@ -136,9 +138,9 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public Maze() {
 		setLayout(new GridBagLayout());
 	}
-	
+
 	// non-server will init with this
-	public Maze(int mazeSize){
+	public Maze(int mazeSize) {
 		this();
 
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -321,27 +323,29 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		buryTreasure();
 		this.repaint();
 	}
-	
-	public void fromString(String input) throws Exception{
+
+	public void fromString(String input) throws Exception {
+		input = input.substring(3);// remove MZ; tag
 		String[] info = input.split(";");
-		if(info.length != this.cells.length * this.cells[0].length){
+		if (info.length != this.cells.length * this.cells[0].length) {
 			throw new Exception("input string is not correct.");
 		}
-		for(int i = 0; i < this.cells.length; i++){
-			for(int j = 0; j < this.cells[i].length; j++){
-				this.cells[i][j].fromString(info[j + i*j]);
+		for (int i = 0; i < this.cells.length; i++) {
+			for (int j = 0; j < this.cells[i].length; j++) {
+				this.cells[i][j].fromString(info[j + i * j]);
 			}
 		}
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		String result = "";
-		for(int i = 0; i < this.cells.length; i++){
-			for(int j = 0; j < this.cells[i].length; j++){
+		for (int i = 0; i < this.cells.length; i++) {
+			for (int j = 0; j < this.cells[i].length; j++) {
 				result += this.cells[i][j].toString() + ";";
 			}
 		}
-		return result;
+		result = result.substring(0, result.length() - 1);
+		return "MZ;" + result;
 	}
 
 }
