@@ -49,10 +49,10 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 
 			// Draw Text
 			if (this.hasTreasure) {
-				g.drawString("X", 10, 20);
+				g.drawString("*", 10, 20);
 			}
 			if (this.player != null) {
-				g.drawString("P", 10, 20);
+				g.drawString(this.player.getName(), 10, 20);
 			}
 		}
 
