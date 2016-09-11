@@ -32,13 +32,21 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			this.y = y;
 			this.hasTreasure = hasTreasure;
 			this.player = null;
+			
+			this.addMouseListener(new MouseAdapter() {
+			     @Override
+			     public void mouseClicked(MouseEvent mouseEvent) {
+			         int count = mouseEvent.getClickCount();
+			         if (count == 1) {
+			        	 setBackground(Color.RED);
+			         }
+			     }
+			});
 		}
 
 		public void setTreasureFoundEventListener(TreasureFoundEventListener listener) {
 			this.listener = listener;
 		}
-
-		private Color defaultBackground;
 
 		@Override
 		public Dimension getPreferredSize() {
@@ -82,7 +90,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		public boolean getHasPlayer(Player player) {
-			return this.player != null && this.player.getName() == player.getName();
+			return this.player != null && this.player.getName().equals(player.getName());
 		}
 
 		// returns true: player meets treasure
@@ -128,18 +136,18 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
 			if (cellInfo.length == 4) {
 				this.player = new Player(cellInfo[3]);
+			}else{
+				this.player = null;
 			}
 		}
-
 	}
 
-	private static Cell[][] cells;
+	private Cell[][] cells;
 
 	public Maze() {
 		setLayout(new GridBagLayout());
 	}
 
-	// non-server will init with this
 	public Maze(int mazeSize) {
 		this();
 
@@ -208,6 +216,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			try {
 				Cell firstAvailableCell = getFirstUnOccupiedCell();
 				boolean treasureFound = firstAvailableCell.enter(player);
+				System.out.println("Player " + player.getName() + " has joined the maze.");
 				if (treasureFound) {
 					// generate another treasure in maze
 					buryTreasure();
@@ -254,7 +263,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			if (x > 0) {
 				cell.leave();
 				this.cells[x - 1][y].enter(player);
-				this.repaint();
 				return true;
 			}
 			return false;
@@ -272,7 +280,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			if (y < getMazeSize() - 1) {
 				cell.leave();
 				this.cells[x][y + 1].enter(player);
-				this.repaint();
 				return true;
 			}
 			return false;
@@ -290,7 +297,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			if (x < getMazeSize() - 1) {
 				cell.leave();
 				this.cells[x + 1][y].enter(player);
-				this.repaint();
 				return true;
 			}
 			return false;
@@ -308,7 +314,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			if (y > 0) {
 				cell.leave();
 				this.cells[x][y - 1].enter(player);
-				this.repaint();
 				return true;
 			}
 			return false;
@@ -325,6 +330,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	public void fromString(String input) throws Exception {
+		System.out.println("client maze update with maze msg: " + input);
 		input = input.substring(3);// remove MZ; tag
 		String[] info = input.split(";");
 		if (info.length != this.cells.length * this.cells[0].length) {
@@ -332,9 +338,10 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 		for (int i = 0; i < this.cells.length; i++) {
 			for (int j = 0; j < this.cells[i].length; j++) {
-				this.cells[i][j].fromString(info[j + i * j]);
+				this.cells[i][j].fromString(info[j + i * this.cells.length]);
 			}
 		}
+		this.repaint();
 	}
 
 	public String toString() {
