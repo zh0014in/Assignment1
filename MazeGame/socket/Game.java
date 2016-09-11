@@ -122,6 +122,16 @@ public class Game implements ServerEventListener {
 	public void onPrimaryServerFoundEvent(DataOutputStream out) {
 		gameThread.setOutputStream(out);
 	}
+
+	@Override
+	public void onMazeStringReceived(String msg) {
+		try {
+			this.maze.fromString(msg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
 
 
@@ -180,8 +190,8 @@ class Connect2Server extends Thread{
 			        	// receive the full list of players
 			        	String msg = inFromServer.readLine();
 			        	String[] msgToken = msg.split(";");
-			        	
-			        	if (msgToken[0].equals("BK")){
+			        	String tag = msgToken[0].trim();
+			        	if (tag.equals("BK")){
 			        		System.out.println("BackupServer received backup info: " + msg);
 			        		if (msgToken[1].equals("IF")){
 			        			ServerThread.playerList =  new ArrayList<Player>();
@@ -197,11 +207,14 @@ class Connect2Server extends Thread{
 			        		}
 //			        		 if = MZ then back up maze info
 			        	}
-			        	else if (msgToken[0].equals("IF")){
+			        	else if (tag.equals("IF")){
 			        		System.out.println("LocalPlayer receive full list of current players: " + msg);
 			        	}
-			        	else if (msgToken[0] == "MZ"){
+			        	else if (tag.equals("MZ")){
 			        		System.out.println("LocalPlayer receive maze info: " + msg);
+			        		if(this.listener != null){
+			        			this.listener.onMazeStringReceived(msg);
+			        		}
 			        	}
 			        	else
 			    			System.out.println("Unkown message received: " + msg);
