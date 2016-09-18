@@ -14,8 +14,8 @@ class Tracker {
 	public static void main(String args[]) {
 		try {
 			int port = 8000; //Integer.parseInt(args[0]);
-			int N = 10; //Integer.parseInt(args[1]);
-			int K = 2; //Integer.parseInt(args[2]);
+			int N = 15; //Integer.parseInt(args[1]);
+			int K = 10; //Integer.parseInt(args[2]);
 			
 //			int port = Integer.parseInt(args[0]);
 //			port = 8000;

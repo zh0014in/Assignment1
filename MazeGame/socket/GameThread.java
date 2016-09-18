@@ -72,11 +72,11 @@ public class GameThread extends Thread {
 
 				switch (newCommand) {
 				case 9:
-					// TODO: tell server player exit game
+					out.writeChars("9\n");
 					looping = false;
 					break;
 				case 0:
-					// refresh position, ask server for update
+					out.writeChars("0\n");
 					break;
 				case 1:
 					out.writeChars("1\n");
