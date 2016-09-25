@@ -103,14 +103,14 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 				return false;
 			}
 		}
-		
-		public boolean leaveAndEnter(Cell newCell, Player player) throws Exception{
+
+		public boolean leaveAndEnter(Cell newCell, Player player) throws Exception {
 			synchronized (Cell.class) {
 				if (newCell.player != null) {
 					// the cell has been occupied by a player, you cannot enter
 					throw new Exception("The cell has been occupied!");
 				}
-				if(this.player == null){
+				if (this.player == null) {
 					throw new Exception("The cell is not occupied with any player!");
 				}
 				newCell.player = player;
@@ -142,28 +142,30 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
 			if (cellInfo.length == 4) {
 				this.player = new Player(cellInfo[3]);
-			}else{
+			} else {
 				this.player = null;
 			}
 		}
 	}
 
-	class PlayersScorePanel extends JPanel{
+	class PlayersScorePanel extends JPanel {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
 			// Draw Text
 			int count = 0;
-			for(int i =0; i < cells.length; i++){
-				for(int j = 0; j < cells[0].length; j++){
-					if(cells[i][j].getHasPlayer()){
-						g.drawString(cells[i][j].player.getName() + ": " + cells[i][j].player.getScore(), 0, 10 + 10*count);
+			for (int i = 0; i < cells.length; i++) {
+				for (int j = 0; j < cells[0].length; j++) {
+					if (cells[i][j].getHasPlayer()) {
+						g.drawString(cells[i][j].player.getName() + ": " + cells[i][j].player.getScore(), 0,
+								10 + 10 * count);
 						count++;
 					}
 				}
 			}
 		}
 	}
+
 	protected Cell[][] cells;
 
 	public Maze() {
@@ -204,7 +206,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 		}
 		PlayersScorePanel scorePanel = new PlayersScorePanel();
-		scorePanel.setPreferredSize(new Dimension(100,500));
+		scorePanel.setPreferredSize(new Dimension(100, 500));
 		add(mazePanel, BorderLayout.CENTER);
 		add(scorePanel, BorderLayout.WEST);
 	}
@@ -242,7 +244,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public boolean JoinGame(Player player) {
 		synchronized (this.cells) {
 			try {
-				Cell firstAvailableCell = getFirstUnOccupiedCell();
+				Cell firstAvailableCell = getRandomUnOccupiedCell();
 				boolean treasureFound = firstAvailableCell.enter(player);
 				System.out.println("Player " + player.getName() + " has joined the maze.");
 				if (treasureFound) {
@@ -256,33 +258,31 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 		}
 	}
-	
-	public boolean ExitGame(Player player){
-		synchronized(this.cells){
-			try{
+
+	public boolean ExitGame(Player player) {
+		synchronized (this.cells) {
+			try {
 				Cell cell = getCellWithPlayer(player);
 				cell.player = null;
 				System.out.println("Player " + player.getName() + " exit.");
 				return true;
-			}catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
 			}
 		}
 	}
-
-	private Cell getFirstUnOccupiedCell() throws Exception {
+	
+	private Cell getRandomUnOccupiedCell() throws Exception {
 		synchronized (this.cells) {
 			int width = getMazeSize();
-			int height = getMazeSize();
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) {
-					if (!this.cells[i][j].getHasPlayer()) {
-						return this.cells[i][j];
-					}
-				}
-			}
-			throw new Exception("The maze is full!");
+			Random r = new Random();
+			int w = 0, h = 0;
+			do {
+				w = r.nextInt(width);
+				h = r.nextInt(width);
+			} while (this.cells[w][h].getHasPlayer());
+			return this.cells[w][h];
 		}
 	}
 
@@ -296,6 +296,8 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 		throw new Exception("The player does not exist in the maze!");
 	}
+	
+	
 
 	public boolean MoveWest(Player player) {
 		System.out.println("Player " + player.getName() + " moving west");

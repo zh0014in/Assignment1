@@ -15,6 +15,7 @@ public class Player implements Serializable {
 	public int informationSeqNumber;
 	public Socket connOnServer = null;
 	public boolean isBackup = false;
+	public int command = -1;
 	public DataOutputStream outToClient = null;
 	
 	public Player() {}

@@ -28,7 +28,6 @@ class Tracker {
 				try {
 					socket = serverSocket.accept();
 					
-					
 					String playerIP = socket.getInetAddress().toString().replace("/", "");
 					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					

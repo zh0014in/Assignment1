@@ -17,14 +17,14 @@ public class Game implements ServerEventListener {
 
 	public static void main(String args[]) {
 		try {
-			Random rn = new Random();
-			String name = "A" + rn.nextInt(100);
-			Game game = new Game(name);
+//			Random rn = new Random();
+//			String name = "A" + rn.nextInt(100);
+//			Game game = new Game(name);
 			
-//			String name = args[2];
-//			String ip = args[0];
-//			int port = Integer.parseInt(args[1]);
-//			Game game = new Game(ip, port, name);
+			String name = args[2];
+			String ip = args[0];
+			int port = Integer.parseInt(args[1]);
+			Game game = new Game(ip, port, name);
 			
 			game.begin();
 		} catch (Exception e) {

@@ -61,6 +61,7 @@ class ClientThread extends Thread{
 			        while(true){
 			        	// receive the full list of players
 			        	String msg = inFromServer.readLine();
+			        	System.out.println("Raw infomation-----------: " + msg);
 			        	String[] msgToken = msg.split(";");
 			        	String tag = msgToken[0].trim();
 			        	if (tag.equals("BK")){
