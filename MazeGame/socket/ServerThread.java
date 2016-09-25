@@ -240,18 +240,18 @@ class PlayerThread extends Thread{
 				outToClient.writeBytes(ServerThread.maze.toString()+"\n");
 				outToClient.flush();
     		}
-            
-		} catch (IOException e) {
+		} catch (Exception e) {
 			ServerThread.playerList.remove(curPlayer);
 			if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
 				ServerThread.findBackupServer(ServerThread.portNumber);
+			ServerThread.maze.ExitGame(curPlayer);
 			String fullListString = "IF;";
             for(Player p : ServerThread.playerList){
 				fullListString += p.toStr() + ";";
 			}
             ServerThread.sendMsgToBackUp(fullListString);
             Game.out.println(fullListString);
-            ServerThread.maze.ExitGame(curPlayer);
+
 			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}
