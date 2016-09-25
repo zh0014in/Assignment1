@@ -53,7 +53,6 @@ class Tracker {
 			System.out.println("Tracker Crashed!");
 		}
 	}
-	
 }
 
 class PlayerConnection extends Thread{

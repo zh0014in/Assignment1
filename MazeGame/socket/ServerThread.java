@@ -70,6 +70,17 @@ public class ServerThread extends Thread {
 				try {
 					clientSocket = serverSocket.accept();
 					if(listener != null && !isPrimary){
+						int start = 0;
+						int len = ServerThread.playerList.size();
+						for(int i=0; i< len; i++){
+							if (ServerThread.playerList.get(i).getPort() == portNumber) {
+								start = i;
+								break;
+							}
+						}
+						for(int i=0; i< start; i++){
+							ServerThread.playerList.remove(0);
+						}
 						listener.onPrimaryServerUpEvent();
 						isPrimary = true;
 					}
@@ -268,14 +279,15 @@ class PlayerThread extends Thread{
 class CommandThread extends Thread{
 	public void run(){
 		while(true){
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			if(ServerThread.myQ.isEmpty())
+			if(ServerThread.myQ.isEmpty()){
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				continue;
+			}
 			String command = ServerThread.myQ.remove(0);
 			if(command != null){
 				System.out.println("Server excute  " + command);
@@ -316,18 +328,18 @@ class CommandThread extends Thread{
 							curPlayer.outToClient.writeBytes(ServerThread.maze.toString()+"\n");
 							curPlayer.outToClient.flush();
 						} catch (Exception e) {
-							ServerThread.playerList.remove(curPlayer);
-							if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
-								ServerThread.findBackupServer(ServerThread.portNumber);
-							ServerThread.maze.ExitGame(curPlayer);
-							String fullListString = "IF;";
-				            for(Player p : ServerThread.playerList){
-								fullListString += p.toStr() + ";";
-							}
-				            ServerThread.sendMsgToBackUp(fullListString);
-				            Game.out.println(fullListString);
-
-							System.out.println("Player"+ curPlayer.toStr() +"disconnect");
+//							ServerThread.playerList.remove(curPlayer);
+//							if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
+//								ServerThread.findBackupServer(ServerThread.portNumber);
+//							ServerThread.maze.ExitGame(curPlayer);
+//							String fullListString = "IF;";
+//				            for(Player p : ServerThread.playerList){
+//								fullListString += p.toStr() + ";";
+//							}
+//				            ServerThread.sendMsgToBackUp(fullListString);
+//				            Game.out.println(fullListString);
+//
+//							System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 						}
 						break;
 					}

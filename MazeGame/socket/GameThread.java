@@ -101,7 +101,6 @@ public class GameThread extends Thread {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.exit(0);
 			}
 		}
 		System.out.println("Game END!!!");
