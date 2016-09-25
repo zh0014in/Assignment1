@@ -158,7 +158,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 				for (int j = 0; j < cells[0].length; j++) {
 					if (cells[i][j].getHasPlayer()) {
 						g.drawString(cells[i][j].player.getName() + ": " + cells[i][j].player.getScore(), 0,
-								10 + 10 * count);
+								20 + 20 * count);
 						count++;
 					}
 				}
