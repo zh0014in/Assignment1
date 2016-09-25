@@ -237,7 +237,7 @@ class PlayerThread extends Thread{
 		} catch (Exception e) {
 			e.printStackTrace();
 			ServerThread.playerList.remove(curPlayer);
-			if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
+			if(curPlayer.getName().equals(ServerThread.backupServer.getName()))
 				ServerThread.findBackupServer(ServerThread.portNumber);
 			ServerThread.maze.ExitGame(curPlayer);
 			String fullListString = "IF;";
@@ -246,7 +246,7 @@ class PlayerThread extends Thread{
 			}
             ServerThread.sendMsgToBackUp(fullListString);
             Game.out.println(fullListString);
-
+            ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
 			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}

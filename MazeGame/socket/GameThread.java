@@ -1,21 +1,13 @@
 package MazeGame.socket;
 
 import java.awt.BorderLayout;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 public class GameThread extends Thread {
 	private Maze maze;
@@ -99,7 +91,11 @@ public class GameThread extends Thread {
 					break;
 				}
 
-			} catch (Exception e) {
+			} 
+//			catch(NoSuchElementException ee){
+//				System.exit(0);
+//			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
