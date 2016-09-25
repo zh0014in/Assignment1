@@ -251,6 +251,7 @@ class PlayerThread extends Thread{
 			}
             ServerThread.sendMsgToBackUp(fullListString);
             Game.out.println(fullListString);
+            ServerThread.maze.ExitGame(curPlayer);
 			System.out.println("Player"+ curPlayer.toStr() +"disconnect");
 		}
 	}

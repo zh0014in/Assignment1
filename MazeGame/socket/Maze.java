@@ -256,6 +256,19 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 		}
 	}
+	
+	public boolean ExitGame(Player player){
+		synchronized(this.cells){
+			try{
+				Cell cell = getCellWithPlayer(player);
+				cell.player = null;
+				return true;
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		}
+	}
 
 	private Cell getFirstUnOccupiedCell() throws Exception {
 		synchronized (this.cells) {
