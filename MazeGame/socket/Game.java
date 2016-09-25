@@ -2,6 +2,7 @@ package MazeGame.socket;
 
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class Game implements ServerEventListener {
 	Socket playerClientSkt2Tracker;
@@ -16,13 +17,15 @@ public class Game implements ServerEventListener {
 
 	public static void main(String args[]) {
 		try {
-			//String name = "A4";
-			String name = args[2];
+			Random rn = new Random();
+			String name = "A" + rn.nextInt(100);
 			Game game = new Game(name);
+			
+//			String name = args[2];
 //			String ip = args[0];
 //			int port = Integer.parseInt(args[1]);
-			
 //			Game game = new Game(ip, port, name);
+			
 			game.begin();
 		} catch (Exception e) {
 			System.out.println("Game Crashed!");

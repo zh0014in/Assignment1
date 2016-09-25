@@ -92,9 +92,14 @@ public class ServerThread extends Thread {
 	public static boolean findBackupServer(int portNumber){
 		for(int i=0; i< ServerThread.playerList.size(); i++){
 			if (ServerThread.playerList.get(i).getPort() == portNumber) {
-				System.out.println("Try to find backup server." + portNumber);
+				
 				for(int j=i+1; j<ServerThread.playerList.size(); j++){
 					backupServer = ServerThread.playerList.get(j);
+					System.out.println("Try to find backup server: " + backupServer.toStr());
+					if (backupServer.outToClient == null){
+						System.out.println("Find backupserver: failed wtf???" + backupServer.outToClient);
+						return false;
+					}
 					backupServer.isBackup = true;
 					System.out.println("Find backupserver: " + backupServer.toStr());
 					return true;
@@ -110,9 +115,10 @@ public class ServerThread extends Thread {
         	ServerThread.backupServer.outToClient.writeBytes("BK;"+msg + "\n");
         	ServerThread.backupServer.outToClient.flush();
 		} catch(Exception e){
-			if(ServerThread.backupServer != null){
-				ServerThread.playerList.remove(ServerThread.backupServer);
-			}
+//			if(ServerThread.backupServer != null){
+//				ServerThread.playerList.remove(ServerThread.backupServer);
+//				System.out.println("======================= 3" );
+//			}
 			if(ServerThread.findBackupServer(ServerThread.portNumber)){
 				try {
 					if(ServerThread.backupServer.outToClient != null){
@@ -131,13 +137,15 @@ public class ServerThread extends Thread {
 			Player curPlayer = ServerThread.playerList.get(i);
 			if(curPlayer.sequenceNumber > tmp.sequenceNumber){
 				ServerThread.playerList.add(i, tmp);
-				System.out.println("Adding player: insert player: " + tmp.toStr() );
+				System.out.println("Adding player: insert new player: " + tmp.toStr() );
 				return true;
 			}
 			
 			if (curPlayer.sequenceNumber == tmp.sequenceNumber){
-				curPlayer = tmp;
-				System.out.println("Adding player: update old player: " + tmp.toStr() );
+				System.out.println("Adding player: update old player-----------: " + curPlayer.toStr() + curPlayer.outToClient );
+				curPlayer.connOnServer = tmp.connOnServer;
+				curPlayer.outToClient = tmp.outToClient;
+				System.out.println("Adding player: update old player: " + curPlayer.toStr() + curPlayer.outToClient );
 				return true;
 			}
 		}
