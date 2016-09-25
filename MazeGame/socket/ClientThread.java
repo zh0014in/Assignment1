@@ -98,13 +98,17 @@ class ClientThread extends Thread {
 						} else
 							System.out.println("Unkown message received: " + msg);
 					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				} 
+//				catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					ServerThread.removePlayer(primaryServer);
+//					ServerThread.maze.ExitGame(primaryServer);
+//					System.out.println("Primary Server down!");
+//				}
+				catch (Exception e) {
 					ServerThread.removePlayer(primaryServer);
-					System.out.println("Primary Server down!");
-				} catch (Exception e) {
 					ServerThread.maze.ExitGame(primaryServer);
-					e.printStackTrace();
+					System.out.println("Primary Server down!");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
