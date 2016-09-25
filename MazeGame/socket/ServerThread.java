@@ -133,7 +133,6 @@ public class ServerThread extends Thread {
 		} catch(Exception e){
 			if(ServerThread.backupServer != null){
 				ServerThread.playerList.remove(ServerThread.backupServer);
-				System.out.println("======================= 3" );
 			}
 			if(ServerThread.findBackupServer(ServerThread.portNumber)){
 				try {
@@ -224,8 +223,9 @@ class PlayerThread extends Thread{
 	        outToClient.flush();
             
 	        outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+	        outToClient.flush();
 	        ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
-			outToClient.flush();
+			
 	        
             while(true){
 	        	String command = inFromClient.readLine().trim();
@@ -302,8 +302,8 @@ class CommandThread extends Thread{
 						// send back the maze
 						try {
 							curPlayer.outToClient.writeBytes(ServerThread.maze.toString()+"\n");
-							ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
 							curPlayer.outToClient.flush();
+							ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
 						} catch (Exception e) {
 //							ServerThread.playerList.remove(curPlayer);
 //							if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
