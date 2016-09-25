@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -112,6 +113,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 					throw new Exception("The cell is not occupied with any player!");
 				}
 				newCell.player = player;
+				playerCell.put(player.getName(), newCell);
 				this.player = null;
 				if (newCell.hasTreasure) {
 					newCell.hasTreasure = false;
@@ -140,6 +142,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
 			if (cellInfo.length == 4) {
 				this.player = new Player(cellInfo[3]);
+				playerCell.put(this.player.getName(), this);
 			} else {
 				this.player = null;
 			}
@@ -165,9 +168,11 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	protected Cell[][] cells;
+	protected HashMap<String, Cell> playerCell;
 
 	public Maze() {
 		setLayout(new BorderLayout());
+		playerCell = new HashMap<String, Cell>();
 	}
 
 	public Maze(int mazeSize) {
@@ -242,15 +247,19 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public boolean JoinGame(Player player) {
 		synchronized (this.cells) {
 			try {
-				for(int i = 0; i < this.cells.length; i++){
-					for(int j = 0; j < this.cells.length; j++){
-						if(this.cells[i][j].getHasPlayer(player)){
-							return false;
-						}
-					}
+				if(playerCell.containsKey(player.getName())){
+					return false;
 				}
+//				for(int i = 0; i < this.cells.length; i++){
+//					for(int j = 0; j < this.cells.length; j++){
+//						if(this.cells[i][j].getHasPlayer(player)){
+//							return false;
+//						}
+//					}
+//				}
 				Cell firstAvailableCell = getRandomUnOccupiedCell();
 				boolean treasureFound = firstAvailableCell.enter(player);
+				playerCell.put(player.getName(), firstAvailableCell);
 				System.out.println("Player " + player.getName() + " has joined the maze.");
 				if (treasureFound) {
 					// generate another treasure in maze
@@ -269,6 +278,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			try {
 				Cell cell = getCellWithPlayer(player);
 				cell.player = null;
+				playerCell.put(player.getName(), null);
 				System.out.println("Player " + player.getName() + " exit.");
 				return true;
 			} catch (Exception e) {
@@ -292,14 +302,19 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	}
 
 	private Cell getCellWithPlayer(Player player) throws Exception {
-		for (int i = 0; i < getMazeSize(); i++) {
-			for (int j = 0; j < getMazeSize(); j++) {
-				if (this.cells[i][j].getHasPlayer(player)) {
-					return this.cells[i][j];
-				}
-			}
+		Cell result = this.playerCell.get(player.getName());
+		if(result == null){
+			throw new Exception("The player does not exist in the maze!");
 		}
-		throw new Exception("The player does not exist in the maze!");
+		return result;
+//		for (int i = 0; i < getMazeSize(); i++) {
+//			for (int j = 0; j < getMazeSize(); j++) {
+//				if (this.cells[i][j].getHasPlayer(player)) {
+//					return this.cells[i][j];
+//				}
+//			}
+//		}
+//		throw new Exception("The player does not exist in the maze!");
 	}
 	
 	
