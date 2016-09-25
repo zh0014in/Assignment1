@@ -69,7 +69,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		public boolean buryTreasure() {
-			if (getHasTreasure()) {
+			if (getHasTreasure() || getHasPlayer()) {
 				return false;
 			}
 			this.hasTreasure = true;
