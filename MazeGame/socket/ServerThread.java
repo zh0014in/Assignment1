@@ -224,6 +224,7 @@ class PlayerThread extends Thread{
 	        outToClient.flush();
             
 	        outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+	        ServerThread.sendMsgToBackUp(ServerThread.maze.toString() + "\n");
 			outToClient.flush();
 	        
             while(true){
@@ -232,31 +233,6 @@ class PlayerThread extends Thread{
 	        	int newCommand = Integer.parseInt(command);
 	        	ServerThread.myQ.add(curPlayer.getName()+";"+newCommand);
 	        	System.out.println("Server receive  " + command + "from " + curPlayer.getName());
-//				switch (newCommand) {
-//				case 9:
-//					break;
-//				case 0:
-//					// refresh position, ask server for update
-//					break;
-//				case 1:
-//					ServerThread.maze.MoveWest(curPlayer);
-//					break;
-//				case 2:
-//					ServerThread.maze.MoveSouth(curPlayer);
-//					break;
-//				case 3:
-//					ServerThread.maze.MoveEast(curPlayer);
-//					break;
-//				case 4:
-//					ServerThread.maze.MoveNorth(curPlayer);
-//					break;
-//				default:
-//					System.out.println("Invalid input: " + newCommand);
-//					break;
-//				}
-//				// send back the maze
-//				outToClient.writeBytes(ServerThread.maze.toString()+"\n");
-//				outToClient.flush();
     		}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -326,6 +302,7 @@ class CommandThread extends Thread{
 						// send back the maze
 						try {
 							curPlayer.outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+							ServerThread.sendMsgToBackUp(ServerThread.maze.toString() + "\n");
 							curPlayer.outToClient.flush();
 						} catch (Exception e) {
 //							ServerThread.playerList.remove(curPlayer);
@@ -351,34 +328,5 @@ class CommandThread extends Thread{
 		}
 	}
 }
-//class Ping extends Thread{
-//	public Ping(){}
-//	
-//	public void run(){
-//		while(true){
-//			try {
-//				Thread.sleep(5000);
-//				for(Player p: ServerThread.playerList){
-//					try{
-//						p.outToClient.writeBytes("PI;" + p.getName() + "\n");
-//					}
-//					catch(IOException e){
-//						ServerThread.playerList.remove(p);
-//						String msg = "IF;";
-//						for(Player temp : ServerThread.playerList){
-//							msg += temp.toStr() + ";";
-//						}
-//						ServerThread.sendMsgToBackUp(msg);
-//						System.out.println("Player "+ p.getName() + " ping failed!!!");
-//						break;
-//					}
-//				}
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//	}
-//}
 
 

@@ -244,6 +244,13 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public boolean JoinGame(Player player) {
 		synchronized (this.cells) {
 			try {
+				for(int i = 0; i < this.cells.length; i++){
+					for(int j = 0; j < this.cells.length; j++){
+						if(this.cells[i][j].getHasPlayer(player)){
+							return false;
+						}
+					}
+				}
 				Cell firstAvailableCell = getRandomUnOccupiedCell();
 				boolean treasureFound = firstAvailableCell.enter(player);
 				System.out.println("Player " + player.getName() + " has joined the maze.");

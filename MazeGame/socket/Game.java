@@ -17,15 +17,15 @@ public class Game implements ServerEventListener {
 
 	public static void main(String args[]) {
 		try {
-//			Random rn = new Random();
-//			String name = "A" + rn.nextInt(100);
-//			Game game = new Game(name);
-			
-			String name = args[2];
-			String ip = args[0];
-			int port = Integer.parseInt(args[1]);
-			Game game = new Game(ip, port, name);
-			
+			Random rn = new Random();
+			String name = "A" + rn.nextInt(100);
+			Game game = new Game(name);
+
+			// String name = args[2];
+			// String ip = args[0];
+			// int port = Integer.parseInt(args[1]);
+			// Game game = new Game(ip, port, name);
+
 			game.begin();
 		} catch (Exception e) {
 			System.out.println("Game Crashed!");
@@ -86,6 +86,7 @@ public class Game implements ServerEventListener {
 			k = Integer.parseInt(mazeParameters[1]);
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
 
+			serverThread.initializeMaze(n, k);
 			gameThread.setMazeSize(n);
 			gameThread.start();
 
@@ -100,7 +101,7 @@ public class Game implements ServerEventListener {
 			ClientThread clientThread = new ClientThread(playerList, this.localPlayer);
 			clientThread.setServerEventListener(this);
 			clientThread.start();
-			
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,7 +134,7 @@ public class Game implements ServerEventListener {
 	public void onPrimaryServerUpEvent() {
 		// pass maze to server thread
 		System.out.println("Primary server is up");
-		this.serverThread.initializeMaze(n, k);
+//		this.serverThread.initializeMaze(n, k);
 		this.gameThread.MarkasPrimaryServer();
 	}
 
