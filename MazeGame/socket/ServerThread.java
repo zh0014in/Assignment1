@@ -113,7 +113,7 @@ public class ServerThread extends Thread {
 					backupServer = ServerThread.playerList.get(j);
 					System.out.println("Try to find backup server: " + backupServer.toStr());
 					if (backupServer.outToClient == null){
-						System.out.println("Find backupserver: failed wtf???" + backupServer.outToClient);
+						System.out.println("Find backupserver: failed???" + backupServer.outToClient);
 						return false;
 					}
 					backupServer.isBackup = true;
