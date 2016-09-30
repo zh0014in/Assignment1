@@ -127,7 +127,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		public String toString() {
-			String result = x + "," + y + "," + this.hasTreasure;
+			String result = x + "," + y + "," + (this.hasTreasure ? 1:0);
 			if (this.player != null) {
 				result += "," + player.toStr();
 			}
@@ -138,7 +138,12 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			String[] cellInfo = input.split(",");
 			this.x = Integer.parseInt(cellInfo[0]);
 			this.y = Integer.parseInt(cellInfo[1]);
-			this.hasTreasure = Boolean.parseBoolean(cellInfo[2]);
+			int hasTreasure = Integer.parseInt(cellInfo[2]);
+			if(hasTreasure == 1){
+				this.hasTreasure = true;
+			}else{
+				this.hasTreasure = false;
+			}
 			if (cellInfo.length == 4) {
 				this.player = new Player(cellInfo[3]);
 			} else {
@@ -379,11 +384,12 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		this.repaint();
 	}
 
-	public void fromString(String input) throws Exception {
+	public void fromString(String input) {
 		input = input.substring(3);// remove MZ; tag
 		String[] info = input.split(";");
 		if (info.length != this.cells.length * this.cells[0].length) {
-			throw new Exception("input string is not correct.");
+			System.out.println("Input string not correct");
+			return;
 		}
 		for (int i = 0; i < this.cells.length; i++) {
 			for (int j = 0; j < this.cells[i].length; j++) {

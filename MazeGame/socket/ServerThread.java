@@ -219,9 +219,10 @@ class PlayerThread extends Thread{
 	        outToClient.writeBytes(fullListString + "\n");
 	        outToClient.flush();
             
-	        outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+	        String mazeString = ServerThread.maze.toString();
+	        outToClient.writeBytes(mazeString +"\n");
 	        outToClient.flush();
-	        ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
+	        ServerThread.sendMsgToBackUp(mazeString);
 			
 	        
             while(true){
@@ -298,9 +299,10 @@ class CommandThread extends Thread{
 						}
 						// send back the maze
 						try {
-							curPlayer.outToClient.writeBytes(ServerThread.maze.toString()+"\n");
+							String mazeString = ServerThread.maze.toString();
+							curPlayer.outToClient.writeBytes(mazeString+"\n");
 							curPlayer.outToClient.flush();
-							ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
+							ServerThread.sendMsgToBackUp(mazeString);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
