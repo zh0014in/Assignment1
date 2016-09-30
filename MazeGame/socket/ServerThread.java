@@ -26,7 +26,6 @@ public class ServerThread extends Thread {
 	protected static Maze maze;
 	
 	public static  ArrayList<String> myQ = new ArrayList<String>();
-//	private Ping ping;
 	
 	public static ArrayList<Player> playerList = new ArrayList<Player>();
 	public static Player backupServer = null;
@@ -62,8 +61,6 @@ public class ServerThread extends Thread {
 			}
 			new CommandThread().start();
 			System.out.println("Server listening on port " + portNumber);
-//			ping = new Ping();
-//			ping.start();
 			
 			Socket clientSocket;
 			while (true) {
@@ -83,6 +80,7 @@ public class ServerThread extends Thread {
 						}
 						listener.onPrimaryServerUpEvent();
 						isPrimary = true;
+						isBackup = false;
 					}
 					String clientAddress = clientSocket.getRemoteSocketAddress().toString();
 					int clientPort = clientSocket.getPort();
@@ -95,7 +93,6 @@ public class ServerThread extends Thread {
 					for(Player p : this.playerList){
 						fullListString += p.toStr() + ";";
 					}
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -305,22 +302,10 @@ class CommandThread extends Thread{
 							curPlayer.outToClient.flush();
 							ServerThread.sendMsgToBackUp(ServerThread.maze.toString());
 						} catch (Exception e) {
-//							ServerThread.playerList.remove(curPlayer);
-//							if(curPlayer.toStr().equals(ServerThread.backupServer.toStr()))
-//								ServerThread.findBackupServer(ServerThread.portNumber);
-//							ServerThread.maze.ExitGame(curPlayer);
-//							String fullListString = "IF;";
-//				            for(Player p : ServerThread.playerList){
-//								fullListString += p.toStr() + ";";
-//							}
-//				            ServerThread.sendMsgToBackUp(fullListString);
-//				            Game.out.println(fullListString);
-//
-//							System.out.println("Player"+ curPlayer.toStr() +"disconnect");
+							e.printStackTrace();
 						}
 						break;
 					}
-					
 				}
 				if(!isFound)
 					System.out.println("Server can not  find player "+ command);
