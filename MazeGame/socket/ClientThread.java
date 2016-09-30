@@ -57,6 +57,8 @@ class ClientThread extends Thread {
 				}
 
 				inFromServer = new BufferedReader(new InputStreamReader(this.conn2Server.getInputStream()));
+				boolean isB = false;
+				
 				try {
 					while (true) {
 						// receive the full list of players
@@ -65,6 +67,7 @@ class ClientThread extends Thread {
 						String[] msgToken = msg.split(";");
 						String tag = msgToken[0].trim();
 						if (tag.equals("BK")) {
+							isB = true;
 							System.out.println("BackupServer received backup info: " + msg);
 							if (this.listener != null) {
 								this.listener.onBackupServerUpEvent();
@@ -107,7 +110,8 @@ class ClientThread extends Thread {
 //				}
 				catch (Exception e) {
 					ServerThread.removePlayer(primaryServer);
-					ServerThread.maze.ExitGame(primaryServer);
+					if(isB)
+						ServerThread.maze.ExitGame(primaryServer);
 					System.out.println("Primary Server down!");
 				}
 			} catch (IOException e) {
