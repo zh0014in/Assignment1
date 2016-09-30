@@ -127,7 +127,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		public String toString() {
-			String result = x + "," + y + "," + (this.hasTreasure ? 1:0);
+			String result = x + "," + y + "," + (this.hasTreasure ? 1 : 0);
 			if (this.player != null) {
 				result += "," + player.toStr();
 			}
@@ -135,19 +135,23 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 
 		public void fromString(String input) {
-			String[] cellInfo = input.split(",");
-			this.x = Integer.parseInt(cellInfo[0]);
-			this.y = Integer.parseInt(cellInfo[1]);
-			int hasTreasure = Integer.parseInt(cellInfo[2]);
-			if(hasTreasure == 1){
-				this.hasTreasure = true;
-			}else{
-				this.hasTreasure = false;
-			}
-			if (cellInfo.length == 4) {
-				this.player = new Player(cellInfo[3]);
-			} else {
-				this.player = null;
+			try {
+				String[] cellInfo = input.split(",");
+				this.x = Integer.parseInt(cellInfo[0]);
+				this.y = Integer.parseInt(cellInfo[1]);
+				int hasTreasure = Integer.parseInt(cellInfo[2]);
+				if (hasTreasure == 1) {
+					this.hasTreasure = true;
+				} else {
+					this.hasTreasure = false;
+				}
+				if (cellInfo.length == 4) {
+					this.player = new Player(cellInfo[3]);
+				} else {
+					this.player = null;
+				}
+			} catch (Exception ex) {
+				System.out.println("cell received string not in correct format");
 			}
 		}
 	}
@@ -248,9 +252,9 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 	public boolean JoinGame(Player player) {
 		synchronized (this.cells) {
 			try {
-				for(int i = 0; i < this.cells.length; i++){
-					for(int j = 0; j < this.cells.length; j++){
-						if(this.cells[i][j].getHasPlayer(player)){
+				for (int i = 0; i < this.cells.length; i++) {
+					for (int j = 0; j < this.cells.length; j++) {
+						if (this.cells[i][j].getHasPlayer(player)) {
 							return false;
 						}
 					}
@@ -283,7 +287,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 			}
 		}
 	}
-	
+
 	private Cell getRandomUnOccupiedCell() throws Exception {
 		synchronized (this.cells) {
 			int width = getMazeSize();
@@ -307,8 +311,6 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 		}
 		throw new Exception("The player " + player.getName() + " does not exist in the maze!");
 	}
-	
-	
 
 	public boolean MoveWest(Player player) {
 		System.out.println("Player " + player.getName() + " moving west");
