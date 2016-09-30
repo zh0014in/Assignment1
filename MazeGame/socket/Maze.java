@@ -300,7 +300,7 @@ public class Maze extends JPanel implements Serializable, TreasureFoundEventList
 				}
 			}
 		}
-		throw new Exception("The player does not exist in the maze!");
+		throw new Exception("The player " + player.getName() + " does not exist in the maze!");
 	}
 	
 	
