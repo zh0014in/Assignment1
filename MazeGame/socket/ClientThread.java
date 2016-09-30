@@ -101,7 +101,7 @@ class ClientThread extends Thread {
 						} else
 							System.out.println("Unkown message received: " + msg);
 					}
-				} 
+				}
 //				catch (IOException e) {
 //					// TODO Auto-generated catch block
 //					ServerThread.removePlayer(primaryServer);

@@ -52,6 +52,7 @@ public class Game implements ServerEventListener {
 		// ------------------------------------------------------------------//
 		// players own server socket in case it need to be the Player Server
 		try {
+			serverThread.setDaemon(true);
 			serverThread.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -87,6 +88,7 @@ public class Game implements ServerEventListener {
 			System.out.println("Maze Size: " + n + " Treasure Number : " + k);
 
 			serverThread.initializeMaze(n, k);
+			gameThread.setDaemon(true);
 			gameThread.setMazeSize(n);
 			gameThread.start();
 

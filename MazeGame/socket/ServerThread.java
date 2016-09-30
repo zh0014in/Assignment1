@@ -173,7 +173,7 @@ public class ServerThread extends Thread {
 	
 	public static void removePlayer(Player tmp){
 		for(Player p: ServerThread.playerList){
-			if(p.toStr().equals(tmp.toStr())){
+			if(p.getName().equals(tmp.getName())){
 				ServerThread.playerList.remove(p);
 				System.out.println("Remove player "+p.toStr()+" from ServerThread");
 				break;
