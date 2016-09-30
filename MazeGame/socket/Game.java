@@ -12,6 +12,7 @@ public class Game implements ServerEventListener {
 	private Player localPlayer;
 	private int n;
 	private int k;
+	private int port = 6789;
 
 	private String name = "";
 
@@ -46,6 +47,7 @@ public class Game implements ServerEventListener {
 		this.name = name;
 		this.localPlayer = null;
 		serverThread.setServerEventListener(this);
+		this.port = 6789;
 	}
 
 	public void begin() {
@@ -65,7 +67,7 @@ public class Game implements ServerEventListener {
 	public void onServerSocketCreatedEvent() {
 		int portNumber = serverThread.getPortNumber();
 		try {
-			playerClientSkt2Tracker = new Socket("localhost", 8000);
+			playerClientSkt2Tracker = new Socket("localhost", this.port);
 			out = new PrintWriter(playerClientSkt2Tracker.getOutputStream(), true);
 			// send its own port number to Tracker
 			String message = this.name + "-" + portNumber;

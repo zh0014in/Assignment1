@@ -13,14 +13,13 @@ class Tracker {
 	public static int count = 0;
 	public static void main(String args[]) {
 		try {
-			int port = 8000; //Integer.parseInt(args[0]);
-			int N = 15; //Integer.parseInt(args[1]);
-			int K = 10; //Integer.parseInt(args[2]);
+//			int port = 8000; //Integer.parseInt(args[0]);
+//			int N = 15; //Integer.parseInt(args[1]);
+//			int K = 10; //Integer.parseInt(args[2]);
 			
-//			int port = Integer.parseInt(args[0]);
-//			port = 8000;
-//			int N = Integer.parseInt(args[1]);
-//			int K = Integer.parseInt(args[2]);
+			int port = Integer.parseInt(args[0]);
+			int N = Integer.parseInt(args[1]);
+			int K = Integer.parseInt(args[2]);
 			
 			Socket socket;
 			ServerSocket serverSocket = new ServerSocket(port);
