@@ -233,7 +233,6 @@ class PlayerThread extends Thread{
 	        	System.out.println("Server receive  " + command + "from " + curPlayer.getName());
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
 			ServerThread.playerList.remove(curPlayer);
 			if(ServerThread.backupServer == null || (ServerThread.backupServer != null && curPlayer.getName().equals(ServerThread.backupServer.getName())))
 				ServerThread.findBackupServer(ServerThread.portNumber);

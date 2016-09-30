@@ -109,7 +109,6 @@ class ClientThread extends Thread {
 //					System.out.println("Primary Server down!");
 //				}
 				catch (Exception e) {
-					e.printStackTrace();
 					ServerThread.removePlayer(primaryServer);
 					if(isB) 
 						ServerThread.maze.ExitGame(primaryServer);
@@ -117,7 +116,7 @@ class ClientThread extends Thread {
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Primary Server problem!");
 			}
 		}
 	}

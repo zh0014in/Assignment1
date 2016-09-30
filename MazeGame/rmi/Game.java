@@ -16,7 +16,6 @@ public class Game {
 			ITracker stub = (ITracker) registry.lookup("ITracker");
 		} catch (Exception e) {
 			System.err.println("ComputePi exception:");
-			e.printStackTrace();
 		}
 	}
 }
