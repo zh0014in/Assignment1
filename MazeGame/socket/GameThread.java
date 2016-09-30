@@ -44,9 +44,10 @@ public class GameThread extends Thread {
 	public void setOutputStream(DataOutputStream out) {
 		this.out = out;
 	}
-
+	
 	public void run() {
 		showGUI();
+		int count = 0;
 		boolean looping = true;
 		Scanner command = new Scanner(System.in);
 
@@ -97,6 +98,9 @@ public class GameThread extends Thread {
 //			}
 			catch (Exception e) {
 				e.printStackTrace();
+				count ++;
+				if(count > 20)
+					break;
 			}
 		}
 		System.out.println("Game END!!!");
