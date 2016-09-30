@@ -110,7 +110,7 @@ class ClientThread extends Thread {
 //				}
 				catch (Exception e) {
 					ServerThread.removePlayer(primaryServer);
-					if(isB)
+					if(isB) 
 						ServerThread.maze.ExitGame(primaryServer);
 					System.out.println("Primary Server down!");
 				}
